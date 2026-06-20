@@ -58,5 +58,55 @@ class DialogueEngine:
             f"{MoveType.REJECT.value}"
         )
 
-        
+    def run(self):
+
+        print("Dialogue Started")
+        print()
+
+        while self.state != DialogueState.CLOSING:
+
+            self.turn_count += 1
+
+            print(f"Turn {self.turn_count}")
+            print(f"State: {self.state_value}")
+
+            if self.turn_count > self.max_turns:
+
+                print("Maximum turns reached.")
+                self.state = DialogueState.CLOSING
+                break
+
+            # OPENING State Below
+            if self.state == DialogueState.OPENING:
+
+                self.propose()
+
+            # DELIBERATION State Below
+            elif self.state == DialogueState.DELIBERATION:
+
+                move = random.choice([
+                    MoveType.ACCEPT,
+                    MoveType.REJECT,
+                    MoveType.PROPOSE
+                ])
+
+                if move == MoveType.ACCEPT:
+                    self.accept()
+
+                elif move == MoveType.REJECT:
+                    self.reject()
+
+                elif move == MoveType.PROPOSE:
+                    self.propose()
+
+            print()
+
+            if self.state != DialogueState.CLOSING:
+                self.switch_turn()
+
+        print("Dialogue Ended")
+
+
+
+
 
