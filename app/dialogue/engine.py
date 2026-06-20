@@ -41,3 +41,22 @@ class DialogueEngine:
         
         if self.state == DialogueState.OPENING:
             self.state = DialogueState.DELIBERATION
+
+    def accept(self):
+        
+        print(
+            f"{self.current_agent.name}: "
+            f"{MoveType.ACCEPT.value}"
+        )
+
+        self.state = DialogueState.CLOSING
+
+    def reject(self):
+
+        print(
+            f"{self.current_agent.name}: "
+            f"{MoveType.REJECT.value}"
+        )
+
+        
+
