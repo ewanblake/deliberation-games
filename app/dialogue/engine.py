@@ -19,3 +19,10 @@ class DialogueEngine:
 
         self.turn_count = 0
         self.max_turns = 10
+
+    def switch_turn(self):
+
+        if self.current_agent == self.agent_a:
+            self.current_agent = self.agent_b
+        else:
+            self.current_agent = self.agent_a
