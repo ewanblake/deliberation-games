@@ -26,3 +26,18 @@ class DialogueEngine:
             self.current_agent = self.agent_b
         else:
             self.current_agent = self.agent_a
+
+    def propose(self):
+
+        proposal = random.choice(TRAVEL_OPTIONS)
+
+        self.current_proposal = proposal
+
+        print(
+            f"{self.current_agent.name}: "
+            f"{MoveType.PROPOSE.value} "
+            f"'{proposal}'"
+        )
+        
+        if self.state == DialogueState.OPENING:
+            self.state = DialogueState.DELIBERATION
