@@ -1,9 +1,9 @@
 import random
 
-from states import DialogueState
-from moves import MoveType
-from agents import Agent
-from scenarios import TRAVEL_OPTIONS
+from app.dialogue.states import DialogueState
+from app.dialogue.moves import MoveType
+from app.dialogue.agents import Agent
+from app.dialogue.scenarios import TRAVEL_OPTIONS
 
 class DialogueEngine:
 
