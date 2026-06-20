@@ -58,6 +58,8 @@ class DialogueEngine:
             f"{MoveType.REJECT.value}"
         )
 
+        self.current_proposal = None
+
     def run(self):
 
         print("Dialogue Started")
@@ -68,9 +70,9 @@ class DialogueEngine:
             self.turn_count += 1
 
             print(f"Turn {self.turn_count}")
-            print(f"State: {self.state_value}")
+            print(f"State: {self.state.value}")
 
-            if self.turn_count > self.max_turns:
+            if self.turn_count >= self.max_turns:
 
                 print("Maximum turns reached.")
                 self.state = DialogueState.CLOSING
