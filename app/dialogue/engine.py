@@ -9,12 +9,15 @@ class DialogueEngine:
 
     def __init__(self):
 
+        # Initial dialogue setup
         self.state = DialogueState.OPENING
         self.agent_a = Agent("Agent A")
         self.agent_b = Agent("Agent B")
 
+        # Agent A will always start the conversation
         self.current_agent = self.agent_a
 
+        # Stores the most recent proposal under discussion
         self.current_proposal = None
 
         self.turn_count = 0
@@ -22,6 +25,7 @@ class DialogueEngine:
 
     def switch_turn(self):
 
+        # Alternates between the two agents after each turn is completed
         if self.current_agent == self.agent_a:
             self.current_agent = self.agent_b
         else:
@@ -29,6 +33,7 @@ class DialogueEngine:
 
     def propose(self):
 
+        # Select a travel option to put forward at random for the discussion
         proposal = random.choice(TRAVEL_OPTIONS)
 
         self.current_proposal = proposal
@@ -38,7 +43,8 @@ class DialogueEngine:
             f"{MoveType.PROPOSE.value} "
             f"'{proposal}'"
         )
-        
+
+        # The first proposal moves the dialogue into the DELIBERATION state       
         if self.state == DialogueState.OPENING:
             self.state = DialogueState.DELIBERATION
 
@@ -49,6 +55,7 @@ class DialogueEngine:
             f"{MoveType.ACCEPT.value}"
         )
 
+        # Acceptance ends the dialogue successfully
         self.state = DialogueState.CLOSING
 
     def reject(self):
@@ -58,6 +65,7 @@ class DialogueEngine:
             f"{MoveType.REJECT.value}"
         )
 
+        # Remove the proposal to a new one can be introduced later
         self.current_proposal = None
 
     def run(self):
@@ -72,6 +80,7 @@ class DialogueEngine:
             print(f"Turn {self.turn_count}")
             print(f"State: {self.state.value}")
 
+            # End the dialogue if it exceeds the allowed turn limit (10)
             if self.turn_count >= self.max_turns:
 
                 print("Maximum turns reached.")
@@ -79,11 +88,13 @@ class DialogueEngine:
                 break
 
             # OPENING State Below
+            # A dialogue must begin with a proposal!
             if self.state == DialogueState.OPENING:
 
                 self.propose()
 
             # DELIBERATION State Below
+            # Agents can ACCEPT, REJECT, or PROPOSE a new proposal
             elif self.state == DialogueState.DELIBERATION:
 
                 move = random.choice([
@@ -103,6 +114,7 @@ class DialogueEngine:
 
             print()
 
+            # Only switch turns if the dialogue is still active!
             if self.state != DialogueState.CLOSING:
                 self.switch_turn()
 
