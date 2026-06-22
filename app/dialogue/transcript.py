@@ -5,7 +5,7 @@ class TranscriptManager:
 
     def __init__(self):
 
-        self.turns == []
+        self.turns = []
 
     def record_turn(
             self,
@@ -24,3 +24,32 @@ class TranscriptManager:
             "proposal": proposal,
             "target_proposal": target_proposal
         }
+
+        self.turns.append(turn_data)
+
+    def save(self):
+
+        transcript = {
+            "scenario": "Travel Planning",
+            "turn_count": len(self.turns),
+            "turns": self.turns
+        }
+
+        folder = "app/transcripts"
+
+        os.makedirs(
+            folder, 
+            exist_ok=True)
+
+        filename =os.path.join(
+            folder,
+            "dialogue_001.json"
+        )
+
+        with open(filename, "w") as file:
+
+            json.dump(
+                transcript,
+                file,
+                indent=4
+            )
