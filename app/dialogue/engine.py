@@ -4,6 +4,7 @@ from app.dialogue.states import DialogueState
 from app.dialogue.moves import MoveType
 from app.dialogue.agents import Agent
 from app.dialogue.scenarios import TRAVEL_OPTIONS
+from app.dialogue.transcript import TranscriptManager
 
 class DialogueEngine:
 
@@ -19,6 +20,8 @@ class DialogueEngine:
 
         # Stores the most recent proposal under discussion
         self.current_proposal = None
+
+        self.transcript = TranscriptManager()
 
         self.turn_count = 0
         self.max_turns = 10
@@ -44,6 +47,14 @@ class DialogueEngine:
             f"'{proposal}'"
         )
 
+        self.transcript.record_turn(
+            turn=self.turn_count,
+            agent=self.current_agent.name,
+            state=self.state.value,
+            move=MoveType.PROPOSE.value,
+            proposal=proposal
+        )
+
         # The first proposal moves the dialogue into the DELIBERATION state       
         if self.state == DialogueState.OPENING:
             self.state = DialogueState.DELIBERATION
@@ -55,6 +66,14 @@ class DialogueEngine:
             f"{MoveType.ACCEPT.value}"
         )
 
+        self.transcript.record_turn(
+            turn=self.turn_count,
+            agent=self.current_agent.name,
+            state=self.state.value,
+            move=MoveType.ACCEPT.value,
+            proposal=self.current_proposal
+        )
+
         # Acceptance ends the dialogue successfully
         self.state = DialogueState.CLOSING
 
@@ -63,6 +82,14 @@ class DialogueEngine:
         print(
             f"{self.current_agent.name}: "
             f"{MoveType.REJECT.value}"
+        )
+
+        self.transcript.record_turn(
+            turn=self.turn_count,
+            agent=self.current_agent.name,
+            state=self.state.value,
+            move=MoveType.REJECT.value,
+            proposal=self.current_proposal
         )
 
         # Remove the proposal to a new one can be introduced later
@@ -119,6 +146,10 @@ class DialogueEngine:
                 self.switch_turn()
 
         print("Dialogue Ended")
+
+        self.transcript.save()
+
+        print("Transcript Saved")
 
 
 

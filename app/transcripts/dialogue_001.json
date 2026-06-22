@@ -1,0 +1,38 @@
+{
+    "scenario": "Travel Planning",
+    "turn_count": 4,
+    "turns": [
+        {
+            "turn": 1,
+            "agent": "Agent A",
+            "state": "OPENING",
+            "move": "PROPOSE",
+            "proposal": "Travel by Train",
+            "target_proposal": null
+        },
+        {
+            "turn": 2,
+            "agent": "Agent B",
+            "state": "DELIBERATION",
+            "move": "REJECT",
+            "proposal": "Travel by Train",
+            "target_proposal": null
+        },
+        {
+            "turn": 3,
+            "agent": "Agent A",
+            "state": "DELIBERATION",
+            "move": "PROPOSE",
+            "proposal": "Travel by Bus",
+            "target_proposal": null
+        },
+        {
+            "turn": 4,
+            "agent": "Agent B",
+            "state": "DELIBERATION",
+            "move": "ACCEPT",
+            "proposal": "Travel by Bus",
+            "target_proposal": null
+        }
+    ]
+}
