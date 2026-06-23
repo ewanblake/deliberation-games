@@ -5,6 +5,7 @@ class TranscriptManager:
 
     def __init__(self):
 
+        # Stores all turns of dialogue before they are written to the disk
         self.turns = []
 
     def record_turn(
@@ -29,6 +30,7 @@ class TranscriptManager:
 
     def save(self):
 
+        # Builds complete structure of the transcript for exporting
         transcript = {
             "scenario": "Travel Planning",
             "turn_count": len(self.turns),
@@ -37,6 +39,7 @@ class TranscriptManager:
 
         folder = "app/transcripts"
 
+        # Will create the transcript directory if it does not exist already
         os.makedirs(
             folder, 
             exist_ok=True)
@@ -46,6 +49,7 @@ class TranscriptManager:
             "dialogue_001.json"
         )
 
+        # Saves the transcript, formatted as JSON for readability purposes
         with open(filename, "w") as file:
 
             json.dump(
