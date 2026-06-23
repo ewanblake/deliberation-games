@@ -125,6 +125,23 @@ class DialogueEngine:
         # Remove the proposal to a new one can be introduced later
         self.current_proposal = None
 
+    def withdraw(self):
+
+        print(
+            f"{self.current_agent.name}: "
+            f"{MoveType.WITHDRAW.value}"
+        )
+
+        self.transcript.record_turn(
+            turn=self.turn_count,
+            agent=self.current_agent.name,
+            state=self.state.value,
+            move=MoveType.WITHDRAW.value,
+            proposal=self.current_proposal
+        )
+
+        self.current_proposal = None
+
     def run(self):
 
         print("Dialogue Started")
