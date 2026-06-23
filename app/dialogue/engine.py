@@ -74,6 +74,21 @@ class DialogueEngine:
             proposal=self.current_proposal
         )
 
+    def challenge(self):
+
+        print(
+            f"{self.current_agent.name}: "
+            f"{MoveType.CHALLENGE.value}"
+        )
+
+        self.transcript.record_turn(
+            turn=self.turn_count,
+            agent=self.current_agent.name,
+            state=self.state.value,
+            move=MoveType.CHALLENGE.value,
+            proposal=self.current_proposal
+        )
+
     def accept(self):
         
         print(
