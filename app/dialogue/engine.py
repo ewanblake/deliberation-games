@@ -189,6 +189,15 @@ class DialogueEngine:
                 elif move == MoveType.PROPOSE:
                     self.propose()
 
+                elif move == MoveType.SUPPORT:
+                    self.support()
+                
+                elif move == MoveType.CHALLENGE:
+                    self.challenge()
+
+                elif move == MoveType.WITHDRAW:
+                    self.withdraw()
+
             print()
 
             # Only switch turns if the dialogue is still active!
