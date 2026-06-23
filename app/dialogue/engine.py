@@ -59,6 +59,21 @@ class DialogueEngine:
         if self.state == DialogueState.OPENING:
             self.state = DialogueState.DELIBERATION
 
+    def support(self):
+
+        print(
+            f"{self.current_agent.name}: "
+            f"{MoveType.SUPPORT.value}"
+        )
+
+        self.transcript.record_turn(
+            turn=self.turn_count,
+            agent=self.current_agent.name,
+            state=self.state.value,
+            move=MoveType.SUPPORT.value,
+            proposal=self.current_proposal
+        )
+
     def accept(self):
         
         print(
