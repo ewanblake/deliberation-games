@@ -172,9 +172,12 @@ class DialogueEngine:
             elif self.state == DialogueState.DELIBERATION:
 
                 move = random.choice([
+                    MoveType.PROPOSE,
+                    MoveType.SUPPORT,
+                    MoveType.CHALLENGE,
                     MoveType.ACCEPT,
                     MoveType.REJECT,
-                    MoveType.PROPOSE
+                    MoveType.WITHDRAW                    
                 ])
 
                 if move == MoveType.ACCEPT:
