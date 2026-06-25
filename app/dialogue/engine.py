@@ -161,6 +161,7 @@ class DialogueEngine:
 
         # Remove the proposal to a new one can be introduced later
         self.current_proposal = None
+        self.proposal_owner = None
 
     def withdraw(self):
 
@@ -178,6 +179,7 @@ class DialogueEngine:
         )
 
         self.current_proposal = None
+        self.proposal_owner = None   
 
     def run(self):
 
