@@ -35,6 +35,41 @@ class DialogueEngine:
         else:
             self.current_agent = self.agent_a
 
+    def get_legal_moves(self):
+
+        legal_moves = []
+
+        if self.state == DialogueState.OPENING:
+
+            # A dialogue must begin with a proposal
+            legal_moves.append(MoveType.PROPOSE)
+
+            return legal_moves
+        
+        if self.state == DialogueState.DELIBERATION:
+
+            # Once a proposal exists, agents can then respond to it
+            if self.current_proposal:
+
+                legal_moves.extend([
+                    MoveType.SUPPORT,
+                    MoveType.CHALLENGE,
+                    MoveType.ACCEPT,
+                    MoveType.REJECT
+                ])
+            
+            # Agents can introduce a new proposal during the DELIBERATION state
+            legal_moves.append(MoveType.PROPOSE)
+
+            # Only the agent who made the current proposal can WITHDRAW it
+            if (
+                self.current_proposal and
+                self.proposal_owner == self.current_agent.name
+            ):
+                legal_moves.append(MoveType.WITHDRAW)
+
+        return legal_moves
+
     def propose(self):
 
         # Select a travel option to put forward at random for the discussion
