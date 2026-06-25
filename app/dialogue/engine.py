@@ -208,14 +208,9 @@ class DialogueEngine:
             # Agents can ACCEPT, REJECT, or PROPOSE a new proposal
             elif self.state == DialogueState.DELIBERATION:
 
-                move = random.choice([
-                    MoveType.PROPOSE,
-                    MoveType.SUPPORT,
-                    MoveType.CHALLENGE,
-                    MoveType.ACCEPT,
-                    MoveType.REJECT,
-                    MoveType.WITHDRAW                    
-                ])
+                legal_moves = self.get_legal_moves()
+
+                move = random.choice(legal_moves)
 
                 if move == MoveType.ACCEPT:
                     self.accept()
