@@ -20,6 +20,7 @@ class DialogueEngine:
 
         # Stores the most recent proposal under discussion
         self.current_proposal = None
+        self.proposal_owner = None
 
         self.transcript = TranscriptManager()
 
@@ -40,6 +41,7 @@ class DialogueEngine:
         proposal = random.choice(TRAVEL_OPTIONS)
 
         self.current_proposal = proposal
+        self.proposal_owner = self.current_agent.name
 
         print(
             f"{self.current_agent.name}: "
