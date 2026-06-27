@@ -40,7 +40,7 @@ flowchart TD
     F --> G
 
     G -- No --> E
-    G -- Yes -> H
+    G -- Yes --> H
 
     H --> I
     I --> J
