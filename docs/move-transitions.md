@@ -1,23 +1,30 @@
 ```mermaid
 stateDiagram-v2
 
-PROPOSE --> SUPPORT
-PROPOSE --> CHALLENGE
-PROPOSE --> ACCEPT
-PROPOSE --> REJECT
-PROPOSE --> WITHDRAW
+    state "PROPOSE" as P
+    state "SUPPORT" as S
+    state "CHALLENGE" as C
+    state "ACCEPT" as A
+    state "REJECT" as R
+    state "WITHDRAW" as W
 
-SUPPORT --> SUPPORT
-SUPPORT --> CHALLENGE
-SUPPORT --> ACCEPT
-SUPPORT --> REJECT
+    P --> S : defend proposal
+    P --> C : question proposal
+    P --> A : agree
+    P --> R : reject
+    P --> W : withdraw own proposal
 
-CHALLENGE --> SUPPORT
-CHALLENGE --> WITHDRAW
-CHALLENGE --> ACCEPT 
-CHALLENGE --> REJECT
+    S --> S : add support
+    S --> C : challenge support
+    S --> A : sufficient support
+    S --> R : unconvinced
 
-REJECT --> PROPOSE
+    C --> S : provide justification
+    C --> W : withdraw proposal
+    C --> A : accept response
+    C --> R : reject response
 
-WITHDRAW --> PROPOSE
+    R --> P : introduce new proposal
+
+    W --> P : propose alternative
 ```
