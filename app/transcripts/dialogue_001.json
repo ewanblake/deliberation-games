@@ -7,7 +7,7 @@
             "agent": "Agent A",
             "state": "OPENING",
             "move": "PROPOSE",
-            "proposal": "Travel by Bus",
+            "proposal": "Travel by Train",
             "target_proposal": null
         },
         {
@@ -15,14 +15,14 @@
             "agent": "Agent B",
             "state": "DELIBERATION",
             "move": "CHALLENGE",
-            "proposal": "Travel by Bus",
+            "proposal": "Travel by Train",
             "target_proposal": null
         },
         {
             "turn": 3,
             "agent": "Agent A",
             "state": "DELIBERATION",
-            "move": "PROPOSE",
+            "move": "SUPPORT",
             "proposal": "Travel by Train",
             "target_proposal": null
         },
@@ -38,7 +38,7 @@
             "turn": 5,
             "agent": "Agent A",
             "state": "DELIBERATION",
-            "move": "REJECT",
+            "move": "SUPPORT",
             "proposal": "Travel by Train",
             "target_proposal": null
         },
@@ -46,31 +46,31 @@
             "turn": 6,
             "agent": "Agent B",
             "state": "DELIBERATION",
-            "move": "PROPOSE",
-            "proposal": "Travel by Plane",
+            "move": "REJECT",
+            "proposal": "Travel by Train",
             "target_proposal": null
         },
         {
             "turn": 7,
             "agent": "Agent A",
             "state": "DELIBERATION",
-            "move": "SUPPORT",
-            "proposal": "Travel by Plane",
+            "move": "PROPOSE",
+            "proposal": "Travel by Bus",
             "target_proposal": null
         },
         {
             "turn": 8,
             "agent": "Agent B",
             "state": "DELIBERATION",
-            "move": "CHALLENGE",
-            "proposal": "Travel by Plane",
+            "move": "REJECT",
+            "proposal": "Travel by Bus",
             "target_proposal": null
         },
         {
             "turn": 9,
             "agent": "Agent A",
             "state": "DELIBERATION",
-            "move": "CHALLENGE",
+            "move": "PROPOSE",
             "proposal": "Travel by Plane",
             "target_proposal": null
         }
