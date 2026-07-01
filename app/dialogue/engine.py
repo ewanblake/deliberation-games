@@ -5,6 +5,7 @@ from app.dialogue.moves import MoveType
 from app.dialogue.agents import Agent
 from app.dialogue.scenarios import TRAVEL_OPTIONS
 from app.dialogue.transcript import TranscriptManager
+from app.dialogue.commitment_store import CommitmentStore
 
 class DialogueEngine:
 
@@ -23,6 +24,7 @@ class DialogueEngine:
         self.proposal_owner = None
 
         self.transcript = TranscriptManager()
+        self.commitment_store = CommitmentStore()
 
         self.turn_count = 0
         self.max_turns = 10
@@ -64,7 +66,9 @@ class DialogueEngine:
             # Only the agent who made the current proposal can WITHDRAW it
             if (
                 self.current_proposal and
-                self.proposal_owner == self.current_agent.name
+                self.commitment_store.get_owner(
+                    self.current_proposal
+                ) == self.current_agent.name
             ):
                 legal_moves.append(MoveType.WITHDRAW)
 
@@ -76,7 +80,10 @@ class DialogueEngine:
         proposal = random.choice(TRAVEL_OPTIONS)
 
         self.current_proposal = proposal
-        self.proposal_owner = self.current_agent.name
+        self.commitment_store.create_commitment(
+            proposal,
+            self.current_agent.name
+        )
 
         print(
             f"{self.current_agent.name}: "
@@ -111,6 +118,10 @@ class DialogueEngine:
             proposal=self.current_proposal
         )
 
+        self.commitment_store.support_commitment(
+            self.current_proposal
+        )
+
     def challenge(self):
 
         print(
@@ -141,6 +152,10 @@ class DialogueEngine:
             proposal=self.current_proposal
         )
 
+        self.commitment_store.accept_commitment(
+            self.current_proposal
+        )
+
         # Acceptance ends the dialogue successfully
         self.state = DialogueState.CLOSING
 
@@ -157,6 +172,10 @@ class DialogueEngine:
             state=self.state.value,
             move=MoveType.REJECT.value,
             proposal=self.current_proposal
+        )
+
+        self.commitment_store.reject_commitment(
+            self.current_proposal
         )
 
         # Remove the proposal to a new one can be introduced later
@@ -176,6 +195,10 @@ class DialogueEngine:
             state=self.state.value,
             move=MoveType.WITHDRAW.value,
             proposal=self.current_proposal
+        )
+
+        self.commitment_store.withdraw_commitment(
+            self.current_proposal
         )
 
         self.current_proposal = None
