@@ -3,33 +3,40 @@ flowchart TD
 
     A[Dialogue Move Executed]
 
-    B[Collect Dialogue Information]
+    B[Update Dialogue State]
 
-    C[
+    C[Update Commitment Store]
+
+    D[Collect Dialogue Information]
+
+    E[
         Turn Number<br/>
         Agent<br/>
         Move Type<br/>
         Proposal<br/>
         Dialogue State<br/>
+        Commitment Information
     ]
 
-    D[Create JSON Record]
+    F[Create JSON Record]
 
-    E[Append Record to Transcript]
+    G[Append Record to Transcript]
 
-    F{Dialogue Finished?}
+    H[Dialogue Finished]
 
-    G[Write Transcript to dialogue_xxx.json]
+    I[Write Transcript to dialogue_xxx.json]
 
-    H([Finished])
+    J([Finished])
 
     A --> B
     B --> C
     C --> D
     D --> E
     E --> F
-
-    F -- No --> A
-    F -- Yes --> G
+    F --> G
     G --> H
+
+    H -- No --> A
+    H -- Yes --> I
+    I --> J
 ```
