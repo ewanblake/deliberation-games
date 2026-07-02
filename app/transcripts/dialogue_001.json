@@ -7,72 +7,90 @@
             "agent": "Agent A",
             "state": "OPENING",
             "move": "PROPOSE",
-            "proposal": "Travel by Train",
-            "target_proposal": null
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 0
         },
         {
             "turn": 2,
             "agent": "Agent B",
             "state": "DELIBERATION",
             "move": "CHALLENGE",
-            "proposal": "Travel by Train",
-            "target_proposal": null
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 0
         },
         {
             "turn": 3,
             "agent": "Agent A",
             "state": "DELIBERATION",
             "move": "SUPPORT",
-            "proposal": "Travel by Train",
-            "target_proposal": null
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 1
         },
         {
             "turn": 4,
             "agent": "Agent B",
             "state": "DELIBERATION",
             "move": "SUPPORT",
-            "proposal": "Travel by Train",
-            "target_proposal": null
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 2
         },
         {
             "turn": 5,
             "agent": "Agent A",
             "state": "DELIBERATION",
-            "move": "SUPPORT",
-            "proposal": "Travel by Train",
-            "target_proposal": null
+            "move": "CHALLENGE",
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 2
         },
         {
             "turn": 6,
             "agent": "Agent B",
             "state": "DELIBERATION",
-            "move": "REJECT",
-            "proposal": "Travel by Train",
-            "target_proposal": null
+            "move": "CHALLENGE",
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 2
         },
         {
             "turn": 7,
             "agent": "Agent A",
             "state": "DELIBERATION",
-            "move": "PROPOSE",
-            "proposal": "Travel by Bus",
-            "target_proposal": null
+            "move": "CHALLENGE",
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 2
         },
         {
             "turn": 8,
             "agent": "Agent B",
             "state": "DELIBERATION",
-            "move": "REJECT",
-            "proposal": "Travel by Bus",
-            "target_proposal": null
+            "move": "SUPPORT",
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 3
         },
         {
             "turn": 9,
             "agent": "Agent A",
             "state": "DELIBERATION",
-            "move": "PROPOSE",
+            "move": "CHALLENGE",
             "proposal": "Travel by Plane",
-            "target_proposal": null
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 3
         }
     ]
 }

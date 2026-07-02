@@ -85,6 +85,8 @@ class DialogueEngine:
             self.current_agent.name
         )
 
+        commitment = self.commitment_store.get_commitment(proposal)
+
         print(
             f"{self.current_agent.name}: "
             f"{MoveType.PROPOSE.value} "
@@ -96,12 +98,19 @@ class DialogueEngine:
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.PROPOSE.value,
-            proposal=proposal
+            proposal=proposal,
+            commitment_status=commitment.status,
+            support_count=commitment.supports
+            
         )
+
+        self.commitment_store.display()
 
         # The first proposal moves the dialogue into the DELIBERATION state       
         if self.state == DialogueState.OPENING:
             self.state = DialogueState.DELIBERATION
+
+        
 
     def support(self):
 
@@ -110,17 +119,25 @@ class DialogueEngine:
             f"{MoveType.SUPPORT.value}"
         )
 
+        self.commitment_store.support_commitment(
+            self.current_proposal
+        )
+
+        commitment = self.commitment_store.get_commitment(
+            self.current_proposal
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.SUPPORT.value,
-            proposal=self.current_proposal
+            proposal=self.current_proposal,
+            commitment_status=commitment.status,
+            support_count=commitment.supports
         )
 
-        self.commitment_store.support_commitment(
-            self.current_proposal
-        )
+        self.commitment_store.display()
 
     def challenge(self):
 
@@ -129,13 +146,21 @@ class DialogueEngine:
             f"{MoveType.CHALLENGE.value}"
         )
 
+        commitment = self.commitment_store.get_commitment(
+            self.current_proposal
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.CHALLENGE.value,
-            proposal=self.current_proposal
+            proposal=self.current_proposal,
+            commitment_status=commitment.status,
+            support_count=commitment.supports
         )
+
+        self.commitment_store.display()
 
     def accept(self):
         
@@ -144,17 +169,25 @@ class DialogueEngine:
             f"{MoveType.ACCEPT.value}"
         )
 
+        self.commitment_store.accept_commitment(
+            self.current_proposal
+        )
+
+        commitment = self.commitment_store.get_commitment(
+            self.current_proposal
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.ACCEPT.value,
-            proposal=self.current_proposal
+            proposal=self.current_proposal,
+            commitment_status=commitment.status,
+            support_count=commitment.supports
         )
 
-        self.commitment_store.accept_commitment(
-            self.current_proposal
-        )
+        self.commitment_store.display()
 
         # Acceptance ends the dialogue successfully
         self.state = DialogueState.CLOSING
@@ -166,17 +199,27 @@ class DialogueEngine:
             f"{MoveType.REJECT.value}"
         )
 
+        self.commitment_store.reject_commitment(
+            self.current_proposal
+        )
+
+        commitment = self.commitment_store.get_commitment(
+            self.current_proposal
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.REJECT.value,
-            proposal=self.current_proposal
+            proposal=self.current_proposal,
+            commitment_status=commitment.status,
+            support_count=commitment.supports
         )
 
-        self.commitment_store.reject_commitment(
-            self.current_proposal
-        )
+        
+
+        self.commitment_store.display()
 
         # Remove the proposal to a new one can be introduced later
         self.current_proposal = None
@@ -189,17 +232,25 @@ class DialogueEngine:
             f"{MoveType.WITHDRAW.value}"
         )
 
+        self.commitment_store.withdraw_commitment(
+            self.current_proposal
+        )
+
+        commitment = self.commitment_store.get_commitment(
+            self.current_proposal
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.WITHDRAW.value,
-            proposal=self.current_proposal
+            proposal=self.current_proposal,
+            commitment_status=commitment.status,
+            support_count=commitment.supports
         )
 
-        self.commitment_store.withdraw_commitment(
-            self.current_proposal
-        )
+        self.commitment_store.display()
 
         self.current_proposal = None
         self.proposal_owner = None   

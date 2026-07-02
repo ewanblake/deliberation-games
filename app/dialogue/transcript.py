@@ -15,7 +15,9 @@ class TranscriptManager:
             state,
             move,
             proposal=None,
-            target_proposal=None
+            target_proposal=None,
+            commitment_status=None,
+            support_count=None
     ):
         turn_data = {
             "turn": turn,
@@ -23,7 +25,9 @@ class TranscriptManager:
             "state": state,
             "move": move,
             "proposal": proposal,
-            "target_proposal": target_proposal
+            "target_proposal": target_proposal,
+            "commitment_status": commitment_status,
+            "support_count": support_count
         }
 
         self.turns.append(turn_data)
