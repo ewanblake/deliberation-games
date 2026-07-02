@@ -3,7 +3,7 @@ flowchart TD
 
 A[Agent Proposes Proposal]
 
-A --> M[Proposal Owner Assigned]
+A --> B[Proposal Owner Assigned]
 
 B --> C[Commitment Created]
 
