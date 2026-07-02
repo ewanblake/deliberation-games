@@ -3,53 +3,30 @@ flowchart TD
 
     A([Start Dialogue])
 
-    B[Initalise Engine<br/>State = OPENING<br/>Turn = 0]
+    B -> C[Determine Legal Moves]
 
-    C[Increment Turn Counter]
+    C -> D[Select Agent]
 
-    D{Maximum Turns Reached?}
+    D --> E[Generate Move]
 
-    E[Determine Legal Moves]
+    E --> F[Validate Move]
 
-    F[Randomly Select Legal Move]
+    F --> |Invalid| C
 
-    G{Move Valid?}
+    F --> |Valid| G[Execute Move]
 
-    H[Execute Move]
+    G --> H[Update Dialogue State]
 
-    I[Update Dialogue State]
+    H --> I[Updated Commitment Store]
 
-    J[Record Transcript Entry]
+    I --> J[Record Transcript]
 
-    K{Dialogue Finished?}
+    J --> K{Termination Conditions?}
 
-    L[Switch Agent]
+    K -->|No| L[Switch Agent]
 
-    M([End Dialogue])
+    L --> B
 
-    N[Save Transcript JSON]
-
-    A --> B
-    B --> C
-    C --> D
-
-    D -- No --> E
-    D -- Yes --> M
-
-    E --> F
-    F --> G
-
-    G -- No --> E
-    G -- Yes --> H
-
-    H --> I
-    I --> J
-    J --> K
-
-    K -- No --> L
-    L --> C
-
-    K -- Yes --> N
-    N --> M
+    K -->|Yes| M[End Dialogue]
 ```
 
