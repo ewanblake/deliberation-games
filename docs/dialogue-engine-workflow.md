@@ -1,11 +1,13 @@
 ```mermaid
 flowchart TD
 
-    A([Start Dialogue])
+    A[Start Dialogue]
 
-    B -> C[Determine Legal Moves]
+    A --> B[Determine Dialogue State]
 
-    C -> D[Select Agent]
+    B --> C[Determine Legal Moves]
+
+    C --> D[Select Agent]
 
     D --> E[Generate Move]
 
