@@ -36,8 +36,11 @@ class TranscriptManager:
 
         # Builds complete structure of the transcript for exporting
         transcript = {
+            "dialogue_id": next_number,
             "scenario": "Travel Planning",
+            "protocol": "Standard",
             "turn_count": len(self.turns),
+            "outcome": None,
             "turns": self.turns
         }
 
@@ -48,11 +51,20 @@ class TranscriptManager:
             folder, 
             exist_ok=True)
 
-        filename =os.path.join(
-            folder,
-            "dialogue_001.json"
-        )
+        existing_files = [
+            file
+            for file in os.listdir(folder)
+            if file.startswith("dialogue_") and file.endswith(".json")
 
+        ]
+
+        next_number = len(existing_files) + 1
+
+        filename = os.path.join(
+            folder,
+            f"dialogue_{next_number:03}.json"
+        )
+        
         # Saves the transcript, formatted as JSON for readability purposes
         with open(filename, "w") as file:
 
