@@ -34,16 +34,6 @@ class TranscriptManager:
 
     def save(self):
 
-        # Builds complete structure of the transcript for exporting
-        transcript = {
-            "dialogue_id": next_number,
-            "scenario": "Travel Planning",
-            "protocol": "Standard",
-            "turn_count": len(self.turns),
-            "outcome": None,
-            "turns": self.turns
-        }
-
         folder = "app/transcripts"
 
         # Will create the transcript directory if it does not exist already
@@ -59,6 +49,16 @@ class TranscriptManager:
         ]
 
         next_number = len(existing_files) + 1
+
+        # Builds complete structure of the transcript for exporting
+        transcript = {
+            "dialogue_id": next_number,
+            "scenario": "Travel Planning",
+            "protocol": "Standard",
+            "turn_count": len(self.turns),
+            "outcome": None,
+            "turns": self.turns
+        }     
 
         filename = os.path.join(
             folder,
