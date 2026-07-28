@@ -17,7 +17,10 @@ class TranscriptManager:
             proposal=None,
             target_proposal=None,
             commitment_status=None,
-            support_count=None
+            support_count=None,
+            burden_status=None,
+            burden_owner=None,
+            burden_proposal=None
     ):
         turn_data = {
             "turn": turn,
@@ -27,7 +30,10 @@ class TranscriptManager:
             "proposal": proposal,
             "target_proposal": target_proposal,
             "commitment_status": commitment_status,
-            "support_count": support_count
+            "support_count": support_count,
+            "burden_status": burden_status,
+            "burden_owner": burden_owner,
+            "burden_proposal": burden_proposal
         }
 
         self.turns.append(turn_data)

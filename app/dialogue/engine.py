@@ -6,6 +6,7 @@ from app.dialogue.agents import Agent
 from app.dialogue.scenarios import TRAVEL_OPTIONS
 from app.dialogue.transcript import TranscriptManager
 from app.dialogue.commitment_store import CommitmentStore
+from app.dialogue.burden import BurdenManager
 
 class DialogueEngine:
 
@@ -25,6 +26,7 @@ class DialogueEngine:
 
         self.transcript = TranscriptManager()
         self.commitment_store = CommitmentStore()
+        self.burden = BurdenManager()
 
         self.turn_count = 0
         self.max_turns = 10
@@ -85,6 +87,11 @@ class DialogueEngine:
             self.current_agent.name
         )
 
+        self.burden.create_burden(
+            owner = self.current_agent.name,
+            proposal=proposal
+        )
+
         commitment = self.commitment_store.get_commitment(proposal)
 
         print(
@@ -100,7 +107,10 @@ class DialogueEngine:
             move=MoveType.PROPOSE.value,
             proposal=proposal,
             commitment_status=commitment.status,
-            support_count=commitment.supports
+            support_count=commitment.supports,
+            burden_status=self.burden.get_status(),
+            burden_owner=self.burden.get_owner(),
+            burden_proposal=self.burden.get_proposal()
             
         )
 
@@ -113,6 +123,10 @@ class DialogueEngine:
         
 
     def support(self):
+
+        if self.current_agent.name == self.burden.get_owner():
+
+            self.burden.satisfy_burden()
 
         print(
             f"{self.current_agent.name}: "
@@ -134,7 +148,10 @@ class DialogueEngine:
             move=MoveType.SUPPORT.value,
             proposal=self.current_proposal,
             commitment_status=commitment.status,
-            support_count=commitment.supports
+            support_count=commitment.supports,
+            burden_status=self.burden.get_status(),
+            burden_owner=self.burden.get_owner(),
+            burden_proposal=self.burden.get_proposal()
         )
 
         self.commitment_store.display()
@@ -145,6 +162,8 @@ class DialogueEngine:
             f"{self.current_agent.name}: "
             f"{MoveType.CHALLENGE.value}"
         )
+
+        self.burden.activate_burden()
 
         commitment = self.commitment_store.get_commitment(
             self.current_proposal
@@ -157,7 +176,10 @@ class DialogueEngine:
             move=MoveType.CHALLENGE.value,
             proposal=self.current_proposal,
             commitment_status=commitment.status,
-            support_count=commitment.supports
+            support_count=commitment.supports,
+            burden_status=self.burden.get_status(),
+            burden_owner=self.burden.get_owner(),
+            burden_proposal=self.burden.get_proposal()
         )
 
         self.commitment_store.display()
@@ -184,10 +206,15 @@ class DialogueEngine:
             move=MoveType.ACCEPT.value,
             proposal=self.current_proposal,
             commitment_status=commitment.status,
-            support_count=commitment.supports
+            support_count=commitment.supports,
+            burden_status=self.burden.get_status(),
+            burden_owner=self.burden.get_owner(),
+            burden_proposal=self.burden.get_proposal()
         )
 
         self.commitment_store.display()
+
+        self.burden.remove_burden()
 
         # Acceptance ends the dialogue successfully
         self.state = DialogueState.CLOSING
@@ -214,7 +241,10 @@ class DialogueEngine:
             move=MoveType.REJECT.value,
             proposal=self.current_proposal,
             commitment_status=commitment.status,
-            support_count=commitment.supports
+            support_count=commitment.supports,
+            burden_status=self.burden.get_status(),
+            burden_owner=self.burden.get_owner(),
+            burden_proposal=self.burden.get_proposal()
         )
 
         
@@ -224,6 +254,8 @@ class DialogueEngine:
         # Remove the proposal to a new one can be introduced later
         self.current_proposal = None
         self.proposal_owner = None
+
+        self.burden.remove_burden()
 
     def withdraw(self):
 
@@ -247,13 +279,18 @@ class DialogueEngine:
             move=MoveType.WITHDRAW.value,
             proposal=self.current_proposal,
             commitment_status=commitment.status,
-            support_count=commitment.supports
+            support_count=commitment.supports,
+            burden_status=self.burden.get_status(),
+            burden_owner=self.burden.get_owner(),
+            burden_proposal=self.burden.get_proposal()
         )
 
         self.commitment_store.display()
 
         self.current_proposal = None
         self.proposal_owner = None   
+
+        self.burden.remove_burden()
 
     def run(self):
 

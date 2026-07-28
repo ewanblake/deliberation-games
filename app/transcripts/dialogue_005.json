@@ -1,0 +1,117 @@
+{
+    "dialogue_id": 5,
+    "scenario": "Travel Planning",
+    "protocol": "Standard",
+    "turn_count": 9,
+    "outcome": null,
+    "turns": [
+        {
+            "turn": 1,
+            "agent": "Agent A",
+            "state": "OPENING",
+            "move": "PROPOSE",
+            "proposal": "Travel by Bus",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 0,
+            "burden_status": null,
+            "burden_owner": null
+        },
+        {
+            "turn": 2,
+            "agent": "Agent B",
+            "state": "DELIBERATION",
+            "move": "PROPOSE",
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 0,
+            "burden_status": null,
+            "burden_owner": null
+        },
+        {
+            "turn": 3,
+            "agent": "Agent A",
+            "state": "DELIBERATION",
+            "move": "SUPPORT",
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 1,
+            "burden_status": null,
+            "burden_owner": null
+        },
+        {
+            "turn": 4,
+            "agent": "Agent B",
+            "state": "DELIBERATION",
+            "move": "SUPPORT",
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 2,
+            "burden_status": null,
+            "burden_owner": null
+        },
+        {
+            "turn": 5,
+            "agent": "Agent A",
+            "state": "DELIBERATION",
+            "move": "REJECT",
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "REJECTED",
+            "support_count": 2,
+            "burden_status": null,
+            "burden_owner": null
+        },
+        {
+            "turn": 6,
+            "agent": "Agent B",
+            "state": "DELIBERATION",
+            "move": "PROPOSE",
+            "proposal": "Travel by Train",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 0,
+            "burden_status": null,
+            "burden_owner": null
+        },
+        {
+            "turn": 7,
+            "agent": "Agent A",
+            "state": "DELIBERATION",
+            "move": "CHALLENGE",
+            "proposal": "Travel by Train",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 0,
+            "burden_status": null,
+            "burden_owner": null
+        },
+        {
+            "turn": 8,
+            "agent": "Agent B",
+            "state": "DELIBERATION",
+            "move": "WITHDRAW",
+            "proposal": "Travel by Train",
+            "target_proposal": null,
+            "commitment_status": "WITHDRAWN",
+            "support_count": 0,
+            "burden_status": null,
+            "burden_owner": null
+        },
+        {
+            "turn": 9,
+            "agent": "Agent A",
+            "state": "DELIBERATION",
+            "move": "PROPOSE",
+            "proposal": "Travel by Plane",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 0,
+            "burden_status": null,
+            "burden_owner": null
+        }
+    ]
+}
