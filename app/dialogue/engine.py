@@ -52,28 +52,50 @@ class DialogueEngine:
         
         if self.state == DialogueState.DELIBERATION:
 
-            # Once a proposal exists, agents can then respond to it
-            if self.current_proposal:
+           # Active burden!
 
-                legal_moves.extend([
-                    MoveType.SUPPORT,
-                    MoveType.CHALLENGE,
-                    MoveType.ACCEPT,
-                    MoveType.REJECT
-                ])
-            
-            # Agents can introduce a new proposal during the DELIBERATION state
-            legal_moves.append(MoveType.PROPOSE)
+           if self.burden.is_active():
+               
+               # Burden holder's turn
 
-            # Only the agent who made the current proposal can WITHDRAW it
-            if (
-                self.current_proposal and
-                self.commitment_store.get_owner(
-                    self.current_proposal
-                ) == self.current_agent.name
-            ):
-                legal_moves.append(MoveType.WITHDRAW)
+               if self.current_agent.name == self.burden.get_owner():
+                   
+                   return [
+                       MoveType.SUPPORT,
+                       MoveType.WITHDRAW
+                   ]
+               
+               # Other participant then waits
 
+               return []
+           
+           # The standard move collection
+
+           if self.current_proposal:
+               
+               legal_moves.extend([
+                   
+                   MoveType.SUPPORT,
+                   MoveType.CHALLENGE,
+                   MoveType.ACCEPT,
+                   MoveType.REJECT
+
+               ])
+
+           legal_moves.append(MoveType.PROPOSE)
+
+           if (
+               self.current_proposal
+               and
+               self.commitment_store.get_owner(
+                   self.current_proposal
+               )
+               ==
+               self.current_agent.name
+           ):
+               
+               legal_moves.append(MoveType.WITHDRAW)
+           
         return legal_moves
 
     def propose(self):
@@ -108,9 +130,7 @@ class DialogueEngine:
             proposal=proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            burden_status=self.burden.get_status(),
-            burden_owner=self.burden.get_owner(),
-            burden_proposal=self.burden.get_proposal()
+            **self.burden.to_dict()
             
         )
 
@@ -149,9 +169,7 @@ class DialogueEngine:
             proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            burden_status=self.burden.get_status(),
-            burden_owner=self.burden.get_owner(),
-            burden_proposal=self.burden.get_proposal()
+            **self.burden.to_dict()
         )
 
         self.commitment_store.display()
@@ -177,9 +195,7 @@ class DialogueEngine:
             proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            burden_status=self.burden.get_status(),
-            burden_owner=self.burden.get_owner(),
-            burden_proposal=self.burden.get_proposal()
+            **self.burden.to_dict()
         )
 
         self.commitment_store.display()
@@ -207,9 +223,7 @@ class DialogueEngine:
             proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            burden_status=self.burden.get_status(),
-            burden_owner=self.burden.get_owner(),
-            burden_proposal=self.burden.get_proposal()
+            **self.burden.to_dict()
         )
 
         self.commitment_store.display()
@@ -242,9 +256,7 @@ class DialogueEngine:
             proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            burden_status=self.burden.get_status(),
-            burden_owner=self.burden.get_owner(),
-            burden_proposal=self.burden.get_proposal()
+            **self.burden.to_dict()
         )
 
         
@@ -280,9 +292,7 @@ class DialogueEngine:
             proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            burden_status=self.burden.get_status(),
-            burden_owner=self.burden.get_owner(),
-            burden_proposal=self.burden.get_proposal()
+            **self.burden.to_dict()
         )
 
         self.commitment_store.display()
@@ -322,6 +332,10 @@ class DialogueEngine:
             elif self.state == DialogueState.DELIBERATION:
 
                 legal_moves = self.get_legal_moves()
+                if not legal_moves:
+
+                    self.switch_turn()
+                    continue
 
                 move = random.choice(legal_moves)
 

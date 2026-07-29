@@ -29,6 +29,13 @@ class BurdenManager:
 
         self.current_burden = None
 
+    def is_active(self):
+
+        return (
+            self.current_burden is not None
+            and self.current_burden["status"] == "ACTIVE"
+        )
+
     def get_status(self):
 
         if self.current_burden:
@@ -52,3 +59,19 @@ class BurdenManager:
             return self.current_burden["proposal"]
         
         return None
+    
+    def to_dict(self):
+
+        if not self.current_burden:
+
+            return {
+                "burden_status": None,
+                "burden_owner": None,
+                "burden_proposal": None
+            }
+        
+        return {
+            "burden_status": self.get_status(),
+            "burden_owner": self.get_owner(),
+            "burden_proposal": self.get_proposal()
+        }
