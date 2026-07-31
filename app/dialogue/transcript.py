@@ -61,14 +61,53 @@ class TranscriptManager:
 
         next_number = len(existing_files) + 1
 
+        statistics = {
+            "proposals": 0,
+            "supports": 0,
+            "challenges": 0,
+            "accepts": 0,
+            "rejects": 0,
+            "withdrawals": 0,
+            "burdens_created": 0,
+            "burdens_satisfied": 0
+        }
+
+        for turn in self.turns:
+
+            move = turn["move"]
+
+            if move == "PROPOSE":
+                statistics["proposals"] += 1
+
+                if turn["burden_owner"] is not None:
+                    statistics["burdens_created"] += 1
+
+            elif move == "SUPPORT":
+                statistics["supports"] += 1
+
+                if turn["burden_status"] == "SATISFIED":
+                    statistics["burdens_satisfied"] += 1
+
+            elif move == "CHALLENGE":
+                statistics["challenges"] += 1
+
+            elif move == "ACCEPT":
+                statistics["accepts"] += 1
+
+            elif move == "REJECT":
+                statistics["rejects"] += 1
+
+            elif move == "WITHDRAW":
+                statistics["withdrawals"] += 1
+
         # Builds complete structure of the transcript for exporting
         transcript = {
             "dialogue_id": next_number,
             "scenario": "Travel Planning",
-            "protocol": protocol,
-            "outcome": outcome,
-            "accepted_proposal": accepted_proposal,
+            "protocol": "Burden",
             "turn_count": len(self.turns),
+            "outcome": None,
+            "statistics": statistics,
             "turns": self.turns
         }     
 

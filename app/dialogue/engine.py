@@ -187,7 +187,8 @@ class DialogueEngine:
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.SUPPORT.value,
-            proposal=self.current_proposal,
+            proposal=None,
+            target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
             **self.burden.to_dict()
@@ -213,7 +214,8 @@ class DialogueEngine:
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.CHALLENGE.value,
-            proposal=self.current_proposal,
+            proposal=None,
+            target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
             **self.burden.to_dict()
@@ -241,7 +243,8 @@ class DialogueEngine:
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.ACCEPT.value,
-            proposal=self.current_proposal,
+            proposal=None,
+            target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
             **self.burden.to_dict()
@@ -274,7 +277,8 @@ class DialogueEngine:
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.REJECT.value,
-            proposal=self.current_proposal,
+            proposal=None,
+            target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
             **self.burden.to_dict()
@@ -310,7 +314,8 @@ class DialogueEngine:
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.WITHDRAW.value,
-            proposal=self.current_proposal,
+            proposal=None,
+            target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
             **self.burden.to_dict()
