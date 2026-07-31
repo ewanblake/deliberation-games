@@ -38,7 +38,12 @@ class TranscriptManager:
 
         self.turns.append(turn_data)
 
-    def save(self):
+    def save(
+            self,
+            protocol=None,
+            outcome=None,
+            accepted_proposal=None
+    ):
 
         folder = "app/transcripts"
 
@@ -60,9 +65,10 @@ class TranscriptManager:
         transcript = {
             "dialogue_id": next_number,
             "scenario": "Travel Planning",
-            "protocol": "Standard",
+            "protocol": protocol,
+            "outcome": outcome,
+            "accepted_proposal": accepted_proposal,
             "turn_count": len(self.turns),
-            "outcome": None,
             "turns": self.turns
         }     
 

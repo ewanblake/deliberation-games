@@ -10,7 +10,10 @@ from app.dialogue.burden import BurdenManager
 
 class DialogueEngine:
 
-    def __init__(self):
+    def __init__(
+            self,
+            protocol = "Standard"
+    ):
 
         # Initial dialogue setup
         self.state = DialogueState.OPENING
@@ -30,6 +33,8 @@ class DialogueEngine:
 
         self.turn_count = 0
         self.max_turns = 10
+
+        self.protocol = protocol
 
     def switch_turn(self):
 
@@ -101,7 +106,21 @@ class DialogueEngine:
     def propose(self):
 
         # Select a travel option to put forward at random for the discussion
-        proposal = random.choice(TRAVEL_OPTIONS)
+        available = [
+
+            proposal
+            for proposal in TRAVEL_OPTIONS
+
+            if not self.commitment_store.proposal_exists(proposal)
+
+        ]
+
+        if not available:
+
+            print("No new proposals available!")
+            return
+        
+        proposal = random.choice(available)
 
         self.current_proposal = proposal
         self.commitment_store.create_commitment(
@@ -144,8 +163,10 @@ class DialogueEngine:
 
     def support(self):
 
-        if self.current_agent.name == self.burden.get_owner():
-
+        if (
+            self.burden.is_active()
+            and self.current_agent.name == self.burden.get_owner()
+        ):
             self.burden.satisfy_burden()
 
         print(
@@ -365,7 +386,35 @@ class DialogueEngine:
 
         print("Dialogue Ended")
 
-        self.transcript.save()
+        outcome = "Turn Limit"
+
+        if self.state == DialogueState.CLOSING:
+
+            if self.current_proposal:
+
+                commitment = self.commitment_store.get_commitment(
+                    self.current_proposal
+                )
+
+                if commitment:
+
+                    if commitment.status == "ACCEPTED":
+                        outcome = "Proposal Accepted!"
+
+                    elif commitment.status == "REJECTED":
+                        outcome = "Proposal Rejected!"
+
+                    elif commitment.status == "WITHDRAWN":
+                        outcome = "Proposal Withdrawn!"
+
+        self.transcript.save(
+
+            protocol = self.protocol,
+
+            outcome = outcome,
+
+            accepted_proposal = self.current_proposal
+        )
 
         print("Transcript Saved")
 

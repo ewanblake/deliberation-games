@@ -81,6 +81,15 @@ class CommitmentStore:
         
         return None
     
+    def proposal_exists(self, proposal):
+
+        commitment = self.get_commitment(proposal)
+
+        if commitment is None:
+            return False
+        
+        return commitment.status == "ACTIVE"
+    
     def display(self):
         
         print()
