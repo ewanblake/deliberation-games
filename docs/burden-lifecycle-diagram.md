@@ -1,0 +1,21 @@
+stateDiagram-v2
+
+    [*] --> INACTIVE : PROPOSE
+
+    INACTIVE --> ACTIVE : CHALLENGE
+
+    ACTIVE --> SATISFIED : SUPPORT by proposer
+
+    ACTIVE --> REMOVED : WITHDRAW
+
+    ACTIVE --> REMOVED : ACCEPT
+
+    ACTIVE --> REMOVED : REJECT
+
+    SATISFIED --> REMOVED : ACCEPT
+
+    SATISFIED --> REMOVED : REJECT
+
+    SATISFIED --> REMOVED : WITHDRAW
+
+    REMOVED --> [*]
