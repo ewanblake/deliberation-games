@@ -1,3 +1,4 @@
+```mermaid
 stateDiagram-v2
 
     [*] --> INACTIVE : PROPOSE
@@ -19,3 +20,4 @@ stateDiagram-v2
     SATISFIED --> REMOVED : WITHDRAW
 
     REMOVED --> [*]
+```

@@ -1,3 +1,4 @@
+```mermaid
 flowchart TD
 
     A[PROPOSE Executed]
@@ -29,3 +30,4 @@ flowchart TD
     J --> N[Continue Dialogue]
 
     M --> O [Continue Dialogue]
+```
