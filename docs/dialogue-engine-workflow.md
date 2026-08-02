@@ -7,28 +7,32 @@ flowchart TD
 
     B --> C[Determine Legal Moves]
 
-    C --> D[Select Agent]
+    C --> D[Apply Protocol Constraints]
 
-    D --> E[Generate Move]
+    D --> E[Select Agent]
 
-    E --> F[Validate Move]
+    E --> F[Generate Move]
 
-    F --> |Invalid| C
+    F --> G[Validate Move]
 
-    F --> |Valid| G[Execute Move]
+    G --> |Invalid| C
 
-    G --> H[Update Dialogue State]
+    G --> |Valid| H[Execute Move]
 
-    H --> I[Updated Commitment Store]
+    H --> I[Update Dialogue State]
 
-    I --> J[Record Transcript]
+    I --> J[Update Commitment Store]
 
-    J --> K{Termination Conditions?}
+    J --> K[Update Burden Store]
 
-    K -->|No| L[Switch Agent]
+    K --> L[Record Transcript]
 
-    L --> B
+    L --> M{Termination Conditions?}
 
-    K -->|Yes| M[End Dialogue]
+    M --> |No| N[Switch Agent]
+
+    N --> B
+
+    M --> |Yes| O[End Dialogue]
 ```
 
