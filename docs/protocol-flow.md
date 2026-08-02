@@ -23,7 +23,7 @@ flowchart TD
 
     H --> |Burden| J[Burden ACTIVE]
 
-    J --> K{Proper's Turn}
+    J --> K{Proposer's Turn}
 
     K --> |SUPPORT| L[Burden SATISFIED]
 
