@@ -151,7 +151,11 @@ class DialogueEngine:
             proposal=proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **self.burden.to_dict()
+            **(
+                self.burden.to_dict()
+                if self.protocol == "Burden"
+                else {}
+            )
             
         )
 
@@ -193,7 +197,11 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **self.burden.to_dict()
+            **(
+                self.burden.to_dict()
+                if self.protocol == "Burden"
+                else {}
+            )
         )
 
         self.commitment_store.display()
@@ -220,7 +228,11 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **self.burden.to_dict()
+            **(
+                self.burden.to_dict()
+                if self.protocol == "Burden"
+                else {}
+            )
         )
 
         self.commitment_store.display()
@@ -249,7 +261,11 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **self.burden.to_dict()
+            **(
+                self.burden.to_dict()
+                if self.protocol == "Burden"
+                else {}
+            )
         )
 
         self.commitment_store.display()
@@ -283,7 +299,11 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **self.burden.to_dict()
+            **(
+                self.burden.to_dict()
+                if self.protocol == "Burden"
+                else {}
+            )
         )
 
         
@@ -320,7 +340,11 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **self.burden.to_dict()
+            **(
+                self.burden.to_dict()
+                if self.protocol == "Burden"
+                else {}
+            )
         )
 
         self.commitment_store.display()
