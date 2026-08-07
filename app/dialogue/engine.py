@@ -59,7 +59,10 @@ class DialogueEngine:
 
            # Active burden!
 
-           if self.burden.is_active():
+           if (
+               self.protocol == "Burden"
+               and self.burden.is_active()
+           ):
                
                # Burden holder's turn
 
@@ -170,7 +173,8 @@ class DialogueEngine:
     def support(self):
 
         if (
-            self.burden.is_active()
+            self.protocol == "Burden"
+            and self.burden.is_active()
             and self.current_agent.name == self.burden.get_owner()
         ):
             self.burden.satisfy_burden()
@@ -213,7 +217,9 @@ class DialogueEngine:
             f"{MoveType.CHALLENGE.value}"
         )
 
-        self.burden.activate_burden()
+        if self.protocol == "Burden":
+
+            self.burden.activate_burden()
 
         commitment = self.commitment_store.get_commitment(
             self.current_proposal
@@ -270,7 +276,9 @@ class DialogueEngine:
 
         self.commitment_store.display()
 
-        self.burden.remove_burden()
+        if self.protocol == "Burden":
+
+            self.burden.remove_burden()
 
         # Acceptance ends the dialogue successfully
         self.state = DialogueState.CLOSING
@@ -314,7 +322,9 @@ class DialogueEngine:
         self.current_proposal = None
         self.proposal_owner = None
 
-        self.burden.remove_burden()
+        if self.protocol == "Burden":
+        
+            self.burden.remove_burden()
 
     def withdraw(self):
 
@@ -352,7 +362,9 @@ class DialogueEngine:
         self.current_proposal = None
         self.proposal_owner = None   
 
-        self.burden.remove_burden()
+        if self.protocol == "Burden":
+            
+            self.burden.remove_burden()
 
     def run(self):
 
