@@ -417,7 +417,7 @@ class DialogueEngine:
         if outcome == "Proposal Accepted!":
             accepted_proposal = self.current_proposal
 
-        self.transcript.saved(
+        self.transcript.save(
             protocol=self.protocol,
             outcome=outcome,
             accepted_proposal=accepted_proposal
