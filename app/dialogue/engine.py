@@ -128,10 +128,12 @@ class DialogueEngine:
             self.current_agent.name
         )
 
-        self.burden.create_burden(
-            owner = self.current_agent.name,
-            proposal=proposal
-        )
+        if self.protocol == "Burden":
+
+            self.burden.create_burden(
+                owner = self.current_agent.name,
+                proposal = proposal
+            )
 
         commitment = self.commitment_store.get_commitment(proposal)
 
