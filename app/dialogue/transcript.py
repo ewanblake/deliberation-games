@@ -40,9 +40,10 @@ class TranscriptManager:
 
     def save(
             self,
-            protocol=None,
-            outcome=None,
-            accepted_proposal=None
+            protocol="Standard",
+            outcome="UNKNOWN",
+            accepted_proposal=None,
+            termination_reason="Unknown"
     ):
 
         folder = "app/transcripts"
@@ -55,7 +56,8 @@ class TranscriptManager:
         existing_files = [
             file
             for file in os.listdir(folder)
-            if file.startswith("dialogue_") and file.endswith(".json")
+            if file.startswith("dialogue_") 
+            and file.endswith(".json")
 
         ]
 
@@ -69,7 +71,9 @@ class TranscriptManager:
             "rejects": 0,
             "withdrawals": 0,
             "burdens_created": 0,
-            "burdens_satisfied": 0
+            "burdens_activated": 0,
+            "burdens_satisfied": 0,
+            "active_commitments": 0
         }
 
         for turn in self.turns:
@@ -85,11 +89,11 @@ class TranscriptManager:
             elif move == "SUPPORT":
                 statistics["supports"] += 1
 
-                if turn["burden_status"] == "SATISFIED":
-                    statistics["burdens_satisfied"] += 1
-
             elif move == "CHALLENGE":
                 statistics["challenges"] += 1
+
+                if turn["burden_status"] == "ACTIVE":
+                    statistics["burdens_activated"] += 1
 
             elif move == "ACCEPT":
                 statistics["accepts"] += 1
@@ -100,13 +104,20 @@ class TranscriptManager:
             elif move == "WITHDRAW":
                 statistics["withdrawals"] += 1
 
+            if turn["burden_status"] == "SATISFIED":
+                statistics["burdens_satisfied"] += 1
+
+            if turn["commitment_status"] == "ACTIVE":
+                statistics["active_commitments"] += 1
+
         # Builds complete structure of the transcript for exporting
         transcript = {
             "dialogue_id": next_number,
             "scenario": "Travel Planning",
-            "protocol": "Burden",
+            "protocol": protocol,
             "turn_count": len(self.turns),
-            "outcome": None,
+            "outcome": outcome,
+            "accepted_proposal": accepted_proposal,
             "statistics": statistics,
             "turns": self.turns
         }     

@@ -412,13 +412,15 @@ class DialogueEngine:
                     elif commitment.status == "WITHDRAWN":
                         outcome = "Proposal Withdrawn!"
 
-        self.transcript.save(
+        accepted_proposal = None
 
-            protocol = self.protocol,
-
-            outcome = outcome,
-
+        if outcome == "Proposal Accepted!":
             accepted_proposal = self.current_proposal
+
+        self.transcript.saved(
+            protocol=self.protocol,
+            outcome=outcome,
+            accepted_proposal=accepted_proposal
         )
 
         print("Transcript Saved")
