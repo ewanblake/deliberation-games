@@ -132,6 +132,7 @@ class TranscriptManager:
             "protocol": protocol,
             "turn_count": len(self.turns),
             "outcome": outcome,
+            "termination_reason": termination_reason,
             "accepted_proposal": accepted_proposal,
             "statistics": statistics,
             "turns": self.turns

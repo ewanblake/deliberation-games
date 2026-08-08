@@ -32,7 +32,7 @@ class DialogueEngine:
         self.burden = BurdenManager()
 
         self.turn_count = 0
-        self.max_turns = 10
+        self.max_turns = 50
         self.termination_reason = None
 
         self.protocol = protocol
@@ -415,9 +415,9 @@ class DialogueEngine:
             self.termination_reason = "PROPOSAL_REJECTED"
             self.status = DialogueState.CLOSING
 
-        # Remove the proposal to a new one can be introduced later
+        # Remove the proposal so a new one can be introduced later on
         self.current_proposal = None
-        self.proposal_owner = None
+        self.propsal_owner = None
 
     def withdraw(self):
 
@@ -487,8 +487,8 @@ class DialogueEngine:
             # End the dialogue if it exceeds the allowed turn limit (10)
             if self.turn_count > self.max_turns:
 
-                print("Maximum turns reached - safety termination.")
-                self.termination_reason = "TURN_LIMIT"
+                print("Safety turn limit reached!")
+                self.termination_reason = "SAFETY_TURN_LIMIT"
                 self.state = DialogueState.CLOSING
                 break
 
@@ -503,12 +503,20 @@ class DialogueEngine:
             elif self.state == DialogueState.DELIBERATION:
 
                 legal_moves = self.get_legal_moves()
+
                 if not legal_moves:
+
+                    if (
+                        self.protocol == "Burden"
+                        and self.burden.is_active()
+                    ):
+
+                        self.switch_turn()
+                        continue
 
                     print("No legal moves remain!")
 
                     self.termination_reason = "NO_LEGAL_MOVES"
-
                     self.state = DialogueState.CLOSING
 
                     break
@@ -541,37 +549,18 @@ class DialogueEngine:
 
         print("Dialogue Ended")
 
-        outcome = self.termination_reason or "Unknown"
+        outcome = self.termination_reason or "UNKNOWN"
 
         accepted_proposal = None
 
-        if self.state == DialogueState.CLOSING:
-
-            if self.current_proposal:
-
-                commitment = self.commitment_store.get_commitment(
-                    self.current_proposal
-                )
-
-                if commitment:
-
-                    if commitment.status == "ACCEPTED":
-                        outcome = "Proposal Accepted!"
-
-                        accepted_proposal = (
-                            self.current_proposal
-                        )
-
-                    elif commitment.status == "REJECTED":
-                        outcome = "Proposal Rejected!"
-
-                    elif commitment.status == "WITHDRAWN":
-                        outcome = "Proposal Withdrawn!"
+        if self.termination_reason == "PROPOSAL_ACCEPTED":
+            accepted_proposal = self.current_proposal
 
         self.transcript.save(
             protocol=self.protocol,
             outcome=outcome,
-            accepted_proposal=accepted_proposal
+            accepted_proposal=accepted_proposal,
+            termination_reason=self.termination_reason
         )
 
         print("Transcript Saved")
