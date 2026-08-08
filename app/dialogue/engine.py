@@ -12,7 +12,7 @@ class DialogueEngine:
 
     def __init__(
             self,
-            protocol = "Burden"
+            protocol = "Standard"
     ):
 
         # Initial dialogue setup
@@ -36,6 +36,11 @@ class DialogueEngine:
         self.termination_reason = None
 
         self.protocol = protocol
+
+        if self.protocol not in ["Standard", "Burden"]:
+            raise ValueError(
+                "Protocol must be either 'Standard' or 'Burden'!"
+            )
 
     def switch_turn(self):
 
@@ -567,5 +572,19 @@ class DialogueEngine:
 
 
 
+def run_simulation(protocol):
+    """
+    Run a single dialogue simulation using the specified protocol!
+    """
+
+    print("=" * 50)
+    print(f"Running {protocol} Protocol Simulation")
+    print("=" * 50)
+
+    engine = DialogueEngine(protocol=protocol)
+
+    engine.run()
+
+    return engine
 
 
