@@ -142,9 +142,11 @@ class DialogueEngine:
 
             print("No new proposals available!")
 
+            self.termination_reason = "NO_PROPOSALS_REMAIN"
+
             self.state = DialogueState.CLOSING
 
-            return False
+            return
         
         proposal = random.choice(available)
 

@@ -89,6 +89,18 @@ class CommitmentStore:
             return False
         
         return commitment.status == "ACTIVE"
+
+    def has_active_commitments(self):
+
+        # Checks whether either agent has currently any active commitments
+        for commitments in self.commitments.values():
+
+            for commitment in commitments:
+
+                if commitment.status == "ACTIVE":
+                    return True
+
+        return False
     
     def display(self):
         
