@@ -588,3 +588,42 @@ def run_simulation(protocol):
     return engine
 
 
+def run_comparative_simulation():
+    """
+    Runs one Standard protocol and one Burden of Proposing protocol simulation
+    """
+
+    print()
+    print("#" * 60)
+    print("COMPARATIVE DIALOGUE SIMULATION")
+    print("#" * 60)
+
+    standard_engine = DialogueEngine(
+        protocol="Standard"
+    )
+
+    standard_engine.run()
+
+    print()
+    print("#" * 60)
+    print("STANDARD SIMULATION COMPLETE")
+    print("#" * 60)
+    print()
+
+    burden_engine = DialogueEngine(
+        protocol="Burden"
+    )
+
+    burden_engine.run()
+
+    print()
+    print("#" * 60)
+    print("BURDEN SIMULATION COMPLETE")
+    print("#" * 60)
+
+    return {
+        "standard": standard_engine,
+        "burden": burden_engine
+    }
+
+
