@@ -418,7 +418,7 @@ class DialogueEngine:
 
         if not self.commitment_store.has_active_commitments():
             self.termination_reason = "PROPOSAL_REJECTED"
-            self.status = DialogueState.CLOSING
+            self.state = DialogueState.CLOSING
 
         # Remove the proposal so a new one can be introduced later on
         self.current_proposal = None
