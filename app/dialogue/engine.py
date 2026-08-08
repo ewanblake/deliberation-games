@@ -66,7 +66,11 @@ class DialogueEngine:
                
                # Burden holder's turn
 
-               if self.current_agent.name == self.burden.get_owner():
+               if (
+                   self.current_agent.name
+                   ==
+                   self.burden.get_owner()
+               ):
                    
                    return [
                        MoveType.SUPPORT,
@@ -90,7 +94,12 @@ class DialogueEngine:
 
                ])
 
-           legal_moves.append(MoveType.PROPOSE)
+           # Do not introduce another proposal whilst a proposal is being currently considered
+           if self.current_proposal is None:
+
+               legal_moves.append(
+                   MoveType.PROPOSE
+               )
 
            if (
                self.current_proposal
@@ -108,6 +117,16 @@ class DialogueEngine:
 
     def propose(self):
 
+
+        # Only one proposal can be under consideration at any time!
+        if self.current_proposal is not None:
+
+            print(
+                "Cannot introduce a new proposal whilst another proposal is active!"
+            )
+
+            return False
+
         # Select a travel option to put forward at random for the discussion
         available = [
 
@@ -121,11 +140,12 @@ class DialogueEngine:
         if not available:
 
             print("No new proposals available!")
-            return
+            return False
         
         proposal = random.choice(available)
 
         self.current_proposal = proposal
+        self.proposal_owner = self.current_agent.name
         self.commitment_store.create_commitment(
             proposal,
             self.current_agent.name
@@ -146,19 +166,27 @@ class DialogueEngine:
             f"'{proposal}'"
         )
 
+        burden_data = (
+            self.burden.to_dict()
+            if self.protocol == "Burden"
+            else {}
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
             state=self.state.value,
             move=MoveType.PROPOSE.value,
             proposal=proposal,
+            target_proposal=None,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **(
-                self.burden.to_dict()
+            burden_event=(
+                "CREATED"
                 if self.protocol == "Burden"
-                else {}
-            )
+                else None
+            ),
+            **burden_data
             
         )
 
@@ -168,16 +196,22 @@ class DialogueEngine:
         if self.state == DialogueState.OPENING:
             self.state = DialogueState.DELIBERATION
 
+        return True
+
         
 
     def support(self):
+
+        burden_event = None
 
         if (
             self.protocol == "Burden"
             and self.burden.is_active()
             and self.current_agent.name == self.burden.get_owner()
         ):
-            self.burden.satisfy_burden()
+            if self.burden.satisfy_burden():
+
+                burden_event = "SATISFIED"
 
         print(
             f"{self.current_agent.name}: "
@@ -192,6 +226,12 @@ class DialogueEngine:
             self.current_proposal
         )
 
+        burden_data = (
+            self.burden.to_dict()
+            if self.protocol == "Burden"
+            else {}
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
@@ -201,28 +241,49 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **(
-                self.burden.to_dict()
-                if self.protocol == "Burden"
-                else {}
+            burden_event=burden_event,
+            **burden_data
             )
-        )
+        
 
         self.commitment_store.display()
 
     def challenge(self):
+
+        # A challenge is unable to be made if a burden is currently active
+        if (
+            self.protocol == "Burden"
+            and
+            self.burden.is_active()
+        ):
+
+            print(
+                "Challenge rejected: An existing burden is already active!"
+            )
+
+            return False
 
         print(
             f"{self.current_agent.name}: "
             f"{MoveType.CHALLENGE.value}"
         )
 
+        burden_event = None
+
         if self.protocol == "Burden":
 
-            self.burden.activate_burden()
+            if self.burden.activate_burden():
+
+                burden_event = "ACTIVATED"
 
         commitment = self.commitment_store.get_commitment(
             self.current_proposal
+        )
+
+        burden_data = (
+            self.burden.to_dict()
+            if self.protocol == "Burden"
+            else {}
         )
 
         self.transcript.record_turn(
@@ -234,14 +295,13 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **(
-                self.burden.to_dict()
-                if self.protocol == "Burden"
-                else {}
-            )
+            burden_event=burden_event,
+            **burden_data
         )
 
         self.commitment_store.display()
+
+        return True
 
     def accept(self):
         
@@ -258,6 +318,20 @@ class DialogueEngine:
             self.current_proposal
         )
 
+        burden_event = None
+
+        if self.protocol == "Burden":
+
+            if self.burden.has_burden():
+
+                burden_event = "RESOLVED"
+
+        burden_data = (
+            self.burden.to_dict()
+            if self.protocol == "Burden"
+            else {}
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
@@ -267,11 +341,8 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **(
-                self.burden.to_dict()
-                if self.protocol == "Burden"
-                else {}
-            )
+            burden_event=burden_event,
+            **burden_data
         )
 
         self.commitment_store.display()
@@ -298,6 +369,22 @@ class DialogueEngine:
             self.current_proposal
         )
 
+        burden_event = None
+
+        if (
+            self.protocol == "Burden"
+            and
+            self.burden.has_burden()
+        ):
+
+            burden_event = "RESOLVED"
+
+        burden_data = (
+            self.burden.to_dict()
+            if self.protocol == "Burden"
+            else {}
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
@@ -307,24 +394,19 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **(
-                self.burden.to_dict()
-                if self.protocol == "Burden"
-                else {}
-            )
+            burden_event=burden_event,
+            **burden_data
         )
 
-        
-
         self.commitment_store.display()
+
+        if self.protocol == "Burden":
+
+            self.burden.remove_burden()
 
         # Remove the proposal to a new one can be introduced later
         self.current_proposal = None
         self.proposal_owner = None
-
-        if self.protocol == "Burden":
-        
-            self.burden.remove_burden()
 
     def withdraw(self):
 
@@ -341,6 +423,22 @@ class DialogueEngine:
             self.current_proposal
         )
 
+        burden_event = None
+
+        if (
+            self.protocol == "Burden"
+            and 
+            self.burden.has_burden()
+        ):
+
+            burden_event = "RESOLVED"
+
+        burden_data = (
+            self.burden.to_dict()
+            if self.protocol == "Burden"
+            else {}
+        )
+
         self.transcript.record_turn(
             turn=self.turn_count,
             agent=self.current_agent.name,
@@ -350,21 +448,18 @@ class DialogueEngine:
             target_proposal=self.current_proposal,
             commitment_status=commitment.status,
             support_count=commitment.supports,
-            **(
-                self.burden.to_dict()
-                if self.protocol == "Burden"
-                else {}
-            )
+            burden_event=burden_event,
+            **burden_data
         )
 
         self.commitment_store.display()
 
+        if self.protocol == "Burden":
+                    
+            self.burden.remove_burden()
+
         self.current_proposal = None
         self.proposal_owner = None   
-
-        if self.protocol == "Burden":
-            
-            self.burden.remove_burden()
 
     def run(self):
 
@@ -431,6 +526,8 @@ class DialogueEngine:
 
         outcome = "Turn Limit"
 
+        accepted_proposal = None
+
         if self.state == DialogueState.CLOSING:
 
             if self.current_proposal:
@@ -444,16 +541,15 @@ class DialogueEngine:
                     if commitment.status == "ACCEPTED":
                         outcome = "Proposal Accepted!"
 
+                        accepted_proposal = (
+                            self.current_proposal
+                        )
+
                     elif commitment.status == "REJECTED":
                         outcome = "Proposal Rejected!"
 
                     elif commitment.status == "WITHDRAWN":
                         outcome = "Proposal Withdrawn!"
-
-        accepted_proposal = None
-
-        if outcome == "Proposal Accepted!":
-            accepted_proposal = self.current_proposal
 
         self.transcript.save(
             protocol=self.protocol,
