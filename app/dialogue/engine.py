@@ -12,7 +12,7 @@ class DialogueEngine:
 
     def __init__(
             self,
-            protocol = "Standard"
+            protocol = "Burden"
     ):
 
         # Initial dialogue setup
@@ -33,6 +33,7 @@ class DialogueEngine:
 
         self.turn_count = 0
         self.max_turns = 10
+        self.termination_reason = None
 
         self.protocol = protocol
 
@@ -140,6 +141,9 @@ class DialogueEngine:
         if not available:
 
             print("No new proposals available!")
+
+            self.state = DialogueState.CLOSING
+
             return False
         
         proposal = random.choice(available)
@@ -351,6 +355,7 @@ class DialogueEngine:
 
             self.burden.remove_burden()
 
+        self.termination_reason = "PROPOSAL ACCEPTED"
         # Acceptance ends the dialogue successfully
         self.state = DialogueState.CLOSING
 
@@ -403,6 +408,10 @@ class DialogueEngine:
         if self.protocol == "Burden":
 
             self.burden.remove_burden()
+
+        if not self.commitment_store.has_active_commitments():
+            self.termination_reason = "PROPOSAL_REJECTED"
+            self.status = DialogueState.CLOSING
 
         # Remove the proposal to a new one can be introduced later
         self.current_proposal = None
@@ -474,9 +483,10 @@ class DialogueEngine:
             print(f"State: {self.state.value}")
 
             # End the dialogue if it exceeds the allowed turn limit (10)
-            if self.turn_count >= self.max_turns:
+            if self.turn_count > self.max_turns:
 
-                print("Maximum turns reached.")
+                print("Maximum turns reached - safety termination.")
+                self.termination_reason = "TURN_LIMIT"
                 self.state = DialogueState.CLOSING
                 break
 
@@ -493,8 +503,13 @@ class DialogueEngine:
                 legal_moves = self.get_legal_moves()
                 if not legal_moves:
 
-                    self.switch_turn()
-                    continue
+                    print("No legal moves remain!")
+
+                    self.termination_reason = "NO_LEGAL_MOVES"
+
+                    self.state = DialogueState.CLOSING
+
+                    break
 
                 move = random.choice(legal_moves)
 
@@ -524,7 +539,7 @@ class DialogueEngine:
 
         print("Dialogue Ended")
 
-        outcome = "Turn Limit"
+        outcome = self.termination_reason or "Unknown"
 
         accepted_proposal = None
 

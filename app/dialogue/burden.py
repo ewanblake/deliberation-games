@@ -59,7 +59,7 @@ class BurdenManager:
 
         self.history.append({
             "owner": self.current_burden["owner"],
-            "proposal": self.curent_burden["proposal"],
+            "proposal": self.current_burden["proposal"],
             "status": "SATISFIED"
         })
 
