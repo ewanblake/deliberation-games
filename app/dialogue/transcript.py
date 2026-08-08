@@ -20,7 +20,8 @@ class TranscriptManager:
             support_count=None,
             burden_status=None,
             burden_owner=None,
-            burden_proposal=None
+            burden_proposal=None,
+            burden_event=None
     ):
         turn_data = {
             "turn": turn,
@@ -33,7 +34,8 @@ class TranscriptManager:
             "support_count": support_count,
             "burden_status": burden_status,
             "burden_owner": burden_owner,
-            "burden_proposal": burden_proposal
+            "burden_proposal": burden_proposal,
+            "burden_event": burden_event
         }
 
         self.turns.append(turn_data)
@@ -73,6 +75,7 @@ class TranscriptManager:
             "burdens_created": 0,
             "burdens_activated": 0,
             "burdens_satisfied": 0,
+            "burdens_resolved": 0,
             "active_commitments": 0
         }
 
@@ -83,11 +86,15 @@ class TranscriptManager:
             if move == "PROPOSE":
                 statistics["proposals"] += 1
 
-                if turn["burden_owner"] is not None:
+                if turn["burden_owner"] == "CREATED":
                     statistics["burdens_created"] += 1
 
             elif move == "SUPPORT":
                 statistics["supports"] += 1
+
+                if turn["burden_event"] == "SATISFIED":
+
+                    statistics["burdens_satisfied"] += 1
 
             elif move == "CHALLENGE":
                 statistics["challenges"] += 1
@@ -106,6 +113,14 @@ class TranscriptManager:
 
             if turn["burden_status"] == "SATISFIED":
                 statistics["burdens_satisfied"] += 1
+
+            if turn["burden_event"] == "ACTIVATED":
+
+                statistics["burdens_activated"] += 1
+
+            elif turn["burden_event"] == "RESOLVED":
+
+                statistics["burdens_resolved"] += 1
 
             if turn["commitment_status"] == "ACTIVE":
                 statistics["active_commitments"] += 1
