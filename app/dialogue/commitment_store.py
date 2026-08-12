@@ -12,12 +12,14 @@ class CommitmentStore:
 
     def create_commitment(self, proposal, owner):
 
-        # An agent may only have one active commitment at a time
-        self.commitments[owner].clear()
+        commitment = Commitment(
+            proposal,
+            owner
+        )
 
-        commitment = Commitment(proposal, owner)
-
-        self.commitments[owner].append(commitment)
+        self.commitments[owner].append(
+            commitment
+        )
 
         return commitment
     
