@@ -91,14 +91,36 @@ class DialogueEngine:
 
            if self.current_proposal:
                
-               legal_moves.extend([
-                   
-                   MoveType.SUPPORT,
-                   MoveType.CHALLENGE,
-                   MoveType.ACCEPT,
-                   MoveType.REJECT
+               # Each agent can only support a current proposal once during its lifespan
+               if not self.commitment_store.has_supported(
+                   self.current_proposal,
+                   self.current_agent.name
+               ):
 
-               ])
+                   legal_moves.append(
+                       MoveType.SUPPORT
+                   )
+
+                # Each proposal can only receive one challenge
+               if not self.commitment_store.has_been_challenged(
+                    self.current_proposal
+                ):
+
+                   legal_moves.append(
+                       MoveType.CHALLENGE
+                   )
+
+                # ACCEPT and REJECT remain available whilst the proposal is active
+               legal_moves.extend([
+                    MoveType.ACCEPT,
+                    MoveType.REJECT
+                ])
+
+                
+
+                
+
+                   
 
            # Do not introduce another proposal whilst a proposal is being currently considered
            if self.current_proposal is None:
