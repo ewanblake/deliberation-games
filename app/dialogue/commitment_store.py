@@ -53,6 +53,20 @@ class CommitmentStore:
 
         return False
 
+    def has_supported(self, proposal, agent):
+
+        commitment = self.find_commitment(
+            proposal
+        )
+
+        if commitment:
+
+            return commitment.has_supported(
+                agent
+            )
+
+        return False
+
     def accept_commitment(self, proposal):
 
         commitment = self.find_commitment(proposal)
