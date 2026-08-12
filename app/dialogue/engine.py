@@ -302,6 +302,10 @@ class DialogueEngine:
             f"{MoveType.CHALLENGE.value}"
         )
 
+        self.commitment_store.challenge_commitment(
+            self.current_proposal
+        )
+
         burden_event = None
 
         if self.protocol == "Burden":
