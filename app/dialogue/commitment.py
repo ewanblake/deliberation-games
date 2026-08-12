@@ -26,7 +26,7 @@ class Commitment:
         if agent in self.supporters:
             return False
 
-        self.supports.add(agent)
+        self.supporters.add(agent)
 
         return True
 
