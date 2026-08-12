@@ -12,7 +12,7 @@ class DialogueEngine:
 
     def __init__(
             self,
-            protocol = "Standard"
+            protocol = "Burden"
     ):
 
         # Initial dialogue setup
@@ -516,7 +516,7 @@ class DialogueEngine:
             print(f"Turn {self.turn_count}")
             print(f"State: {self.state.value}")
 
-            # End the dialogue if it exceeds the allowed turn limit (10)
+            # End the dialogue if it exceeds the allowed turn limit (30)
             if self.turn_count > self.max_turns:
 
                 print("Maximum dialogue length reached!")
@@ -657,4 +657,65 @@ def run_comparative_simulation():
         "burden": burden_engine
     }
 
+def run_multiple_simulations(protocol, simulation_count):
+    """
+    Runs a specific number of simulations for either protocol.
 
+    The parameters are set as follows:
+        protocol (str): "Burden" or "Standard"
+        simulation_count (int): Specific number of dialogues to generate
+
+    Output returns:
+        list: DialogueEngine instances generated during the batch requested
+    """
+
+    if protocol not in ["Burden", "Standard"]:
+        raise ValueError(
+            "Protocol must either be 'Burden' or 'Standard'!"
+        )
+
+    if not isinstance(simulation_count, int):
+        raise TypeError(
+            "Simulation count must be an integer!"
+        )
+
+    engines = []
+
+    print()
+    print("=" * 60)
+    print(
+        f"RUNNING {simulation_count}"
+        f"{protocol.upper()} SIMULATIONS"
+    )
+    print("=" * 60)
+
+    for simulation_number in range(
+        1,
+        simulation_count + 1
+    ):
+
+        print()
+        print(
+            f"Simulation "
+            f"{simulation_number}/{simulation_count}"
+        )
+
+        engine = DialogueEngine(
+            protocol=protocol
+        )
+
+        engine.run()
+
+        engines.append(
+            engine
+        )
+
+    print()
+    print("=" & 60)
+    print(
+        f"{simulation_count} "
+        f"{protocol.upper()} SIMULATIONS COMPLETE!"
+    )
+    print("=" * 60)
+
+    return engines
