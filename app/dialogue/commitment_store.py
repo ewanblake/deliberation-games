@@ -67,6 +67,30 @@ class CommitmentStore:
 
         return False
 
+    def challenge_commitment(self, proposal):
+
+        commitment = self.find_commitment(
+            proposal
+        )
+
+        if commitment:
+
+            return commitment.mark_challenged()
+
+        return False
+
+    def has_been_challenged(self, proposal):
+
+        commitment = self.find_commitment(
+            proposal
+        )
+
+        if commitment:
+
+            return commitment.has_been_challenged()
+
+        return False
+
     def accept_commitment(self, proposal):
 
         commitment = self.find_commitment(proposal)
