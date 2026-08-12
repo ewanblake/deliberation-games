@@ -657,7 +657,7 @@ def run_comparative_simulation():
         "burden": burden_engine
     }
 
-def run_multiple_simulations(protocol = "Standard", simulation_count = 100):
+def run_multiple_simulations(protocol, simulation_count):
     """
     Runs a specific number of simulations for either protocol.
 
@@ -678,6 +678,11 @@ def run_multiple_simulations(protocol = "Standard", simulation_count = 100):
         raise TypeError(
             "Simulation count must be an integer!"
         )
+
+    if simulation_count <= 0:
+            raise ValueError(
+                "Simulation count must be greater than 0!"
+            )
 
     engines = []
 
@@ -711,7 +716,7 @@ def run_multiple_simulations(protocol = "Standard", simulation_count = 100):
         )
 
     print()
-    print("=" & 60)
+    print("=" * 60)
     print(
         f"{simulation_count} "
         f"{protocol.upper()} SIMULATIONS COMPLETE!"

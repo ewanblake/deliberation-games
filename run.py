@@ -1,6 +1,10 @@
 from flask import Flask
 
 from app.dialogue.engine import DialogueEngine
+from app.dialogue.engine import (
+    run_multiple_simulations,
+    run_comparative_batch
+)
 
 app = Flask(__name__)
 
@@ -18,4 +22,7 @@ def simulate():
     return "Simulation complete!"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    run_multiple_simulations(
+        protocol="Standard",
+        simulation_count=0
+    )
