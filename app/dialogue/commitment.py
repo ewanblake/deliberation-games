@@ -2,19 +2,52 @@ class Commitment:
 
     def __init__(self, proposal, owner):
 
-        # Represents a proposal currently under discussion
+        # Represents a current proposal under discussion
         self.proposal = proposal
         self.owner = owner
 
-        # New commitments begin in the active state
+        # Fresh commitments start in the active state
         self.status = "ACTIVE"
 
-        # Tracks the number of agents who have supported the proposal
-        self.supports = 0
+        # Tracks which agents have supported the proposal
+        self.supporters = set()
 
-    def add_support(self):
+        # Tracks whether the proposal has already been challenged
+        self.challenged = False
 
-        self.supports += 1
+    @property
+    def supports(self):
+
+        return len(self.supporters)
+
+    def add_support(self, agent):
+
+        # Each agent can only support the proposal once and only once!
+        if agent in self.supporters:
+            return False
+
+        self.supports.add(agent)
+
+        return True
+
+    def has_supported(self, agent):
+
+        return agent in self.supporters
+
+
+    def mark_challenged(self):
+
+        # A proposal can only be challenged once!
+        if self.challenged:
+            return False
+
+        self.challenged = True
+
+        return True
+
+    def has_been_challenged(self):
+
+        return self.challenged
 
     def accept(self):
 
@@ -25,5 +58,4 @@ class Commitment:
         self.status = "REJECTED"
 
     def withdraw(self):
-
-        self.status = "WITHDRAWN"
+        self.status = "WITHDRAWN" 
