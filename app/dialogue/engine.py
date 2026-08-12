@@ -32,7 +32,7 @@ class DialogueEngine:
         self.burden = BurdenManager()
 
         self.turn_count = 0
-        self.max_turns = 50
+        self.max_turns = 30
         self.termination_reason = None
 
         self.protocol = protocol
@@ -422,7 +422,7 @@ class DialogueEngine:
 
         # Remove the proposal so a new one can be introduced later on
         self.current_proposal = None
-        self.propsal_owner = None
+        self.proposal_owner = None
 
     def withdraw(self):
 
@@ -492,8 +492,8 @@ class DialogueEngine:
             # End the dialogue if it exceeds the allowed turn limit (10)
             if self.turn_count > self.max_turns:
 
-                print("Safety turn limit reached!")
-                self.termination_reason = "SAFETY_TURN_LIMIT"
+                print("Maximum dialogue length reached!")
+                self.termination_reason = "MAX_TURNS_REACHED"
                 self.state = DialogueState.CLOSING
                 break
 
@@ -515,6 +515,10 @@ class DialogueEngine:
                         self.protocol == "Burden"
                         and self.burden.is_active()
                     ):
+
+                        print(
+                            "Waiting for burden holder to respond!"
+                        )
 
                         self.switch_turn()
                         continue
