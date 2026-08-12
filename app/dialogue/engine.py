@@ -657,7 +657,7 @@ def run_comparative_simulation():
         "burden": burden_engine
     }
 
-def run_multiple_simulations(protocol, simulation_count):
+def run_multiple_simulations(protocol = "Standard", simulation_count = 100):
     """
     Runs a specific number of simulations for either protocol.
 
@@ -719,3 +719,49 @@ def run_multiple_simulations(protocol, simulation_count):
     print("=" * 60)
 
     return engines
+
+def run_comparative_batch(simulation_count):
+    """
+    Runs the same specific number of Burden and Standard simulations.
+
+    Parameters:
+        simulation_count (int): Number of specific simulations to run for each protocol type
+
+    Returns:
+        dict: Burden and Standard simulation results
+    """
+
+    if not isinstance(simulation_count, int):
+        raise TypeError(
+            "Simulation must be an integer!"
+        )
+
+    if simulation_count <= 0:
+        raise ValueError(
+            "Simulation count must be greater than 0!"
+        )
+
+    print()
+    print("#" * 60)
+    print("COMPARATIVE SIMULATION BATCH")
+    print("#" * 60)
+
+    standard_results = run_multiple_simulations(
+        protocol="Standard",
+        simulation_count=simulation_count
+    )
+
+    burden_results = run_multiple_simulations(
+        protocol="Burden",
+        simulation_count=simulation_count
+    )
+
+    print()
+    print("#" * 60)
+    print("COMPARATIVE BATCH COMPLETE")
+    print("#" * 60)
+
+    return {
+        "Standard": standard_results,
+        "Burden": burden_results
+    }
