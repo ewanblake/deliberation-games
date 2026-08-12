@@ -252,7 +252,8 @@ class DialogueEngine:
         )
 
         self.commitment_store.support_commitment(
-            self.current_proposal
+            self.current_proposal,
+            self.current_agent.name
         )
 
         commitment = self.commitment_store.get_commitment(
