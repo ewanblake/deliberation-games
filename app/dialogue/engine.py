@@ -389,7 +389,7 @@ class DialogueEngine:
 
             self.burden.remove_burden()
 
-        self.termination_reason = "PROPOSAL ACCEPTED"
+        self.termination_reason = "PROPOSAL_ACCEPTED"
         # Acceptance ends the dialogue successfully
         self.state = DialogueState.CLOSING
 
