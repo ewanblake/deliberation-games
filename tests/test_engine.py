@@ -56,7 +56,7 @@ def test_burden_protocol_creates_and_activates_burden(monkeypatch):
     engine = DialogueEngine(protocol="Burden")
 
     monkeypatch.setattr(
-        "app.dialogue.engine.random.choice!",
+        "app.dialogue.engine.random.choice",
         lambda options: options[0]
     )
 

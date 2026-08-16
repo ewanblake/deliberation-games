@@ -9,7 +9,7 @@ def test_transcript_is_saved_correctly(
 
     monkeypatch.chdir(tmp_path)
 
-    transcript = TranscriptManager
+    transcript = TranscriptManager()
 
     transcript.record_turn(
         turn=1,
