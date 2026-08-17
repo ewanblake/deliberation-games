@@ -1,8 +1,14 @@
 import os
 
-from artifact_tool import Workbook, SpreadsheetFile
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils import get_column_letter
 
-def calculate_dialogue_statistics(engine, dialogue_id):
+
+def calculate_dialogue_statistics(
+        engine,
+        dialogue_id
+):
 
     move_counts = {
         "PROPOSE": 0,
@@ -54,31 +60,31 @@ def calculate_dialogue_statistics(engine, dialogue_id):
     accepted_proposal = None
 
     if accepted_flag == 1:
-        accepted_proposal = (
-            engine.current_proposal
-        )
+        accepted_proposal = engine.current_proposal
 
-    return[
-        dialogue_id,
-        engine.protocol,
-        len(engine.transcript.turns),
-        termination_reason,
-        termination_reason,
-        accepted_proposal,
-        move_counts["PROPOSE"],
-        move_counts["SUPPORT"],
-        move_counts["CHALLENGE"],
-        move_counts["ACCEPT"],
-        move_counts["REJECT"],
-        move_counts["WITHDRAW"],
-        burden_counts["CREATED"],
-        burden_counts["ACTIVATED"],
-        burden_counts["SATISFIED"],
-        burden_counts["RESOLVED"],
-        accepted_flag,
-        rejected_flag
+    return {
+        "Dialogue ID": dialogue_id,
+        "Protocol": engine.protocol,
+        "Turn Count": len(
+            engine.transcript.turns
+        ),
+        "Outcome": termination_reason,
+        "Termination Reason": termination_reason,
+        "Accepted Proposal": accepted_proposal,
+        "PROPOSE": move_counts["PROPOSE"],
+        "SUPPORT": move_counts["SUPPORT"],
+        "CHALLENGE": move_counts["CHALLENGE"],
+        "ACCEPT": move_counts["ACCEPT"],
+        "REJECT": move_counts["REJECT"],
+        "WITHDRAW": move_counts["WITHDRAW"],
+        "Burdens Created": burden_counts["CREATED"],
+        "Burdens Activated": burden_counts["ACTIVATED"],
+        "Burdens Satisfied": burden_counts["SATISFIED"],
+        "Burdens Resolved": burden_counts["RESOLVED"],
+        "Accepted Flag": accepted_flag,
+        "Rejected Flag": rejected_flag
+    }
 
-    ]
 
 def get_next_results_filename():
 
@@ -102,8 +108,33 @@ def get_next_results_filename():
         )
     ]
 
+    numbers = []
+
+    for filename in existing_files:
+
+        try:
+
+            number = int(
+                filename
+                .replace(
+                    "simulation_results_",
+                    ""
+                )
+                .replace(
+                    ".xlsx",
+                    ""
+                )
+            )
+
+            numbers.append(number)
+
+        except ValueError:
+            continue
+
     next_number = (
-        len(existing_files) + 1
+        max(numbers) + 1
+        if numbers
+        else 1
     )
 
     return os.path.join(
@@ -111,20 +142,71 @@ def get_next_results_filename():
         f"simulation_results_{next_number:03}.xlsx"
     )
 
-def export_comparative_results(
-        standard_engines,
-        burden_engines
+
+def style_header(worksheet):
+
+    header_fill = PatternFill(
+        fill_type="solid",
+        fgColor="1F2937"
+    )
+
+    header_font = Font(
+        color="FFFFFF",
+        bold=True
+    )
+
+    for cell in worksheet[1]:
+
+        cell.fill = header_fill
+        cell.font = header_font
+
+        cell.alignment = Alignment(
+            horizontal="center",
+            vertical="center",
+            wrap_text=True
+        )
+
+
+def autofit_columns(worksheet):
+
+    for column_cells in worksheet.columns:
+
+        max_length = 0
+
+        column_letter = get_column_letter(
+            column_cells[0].column
+        )
+
+        for cell in column_cells:
+
+            value = cell.value
+
+            if value is None:
+                continue
+
+            value_length = len(
+                str(value)
+            )
+
+            if value_length > max_length:
+                max_length = value_length
+
+        worksheet.column_dimensions[
+            column_letter
+        ].width = min(
+            max_length + 2,
+            28
+        )
+
+
+def create_raw_data_sheet(
+        workbook,
+        rows
 ):
 
-    workbook = Workbook.create()
+    worksheet = workbook.active
 
-    raw_sheet = workbook.worksheets.add(
-        "Raw Data"
-    )
-
-    summary_sheet = workbook.worksheets.add(
-        "Protocol Summary"
-    )
+    worksheet.title = "Raw Data"
 
     headers = [
         "Dialogue ID",
@@ -142,10 +224,319 @@ def export_comparative_results(
         "Burdens Created",
         "Burdens Activated",
         "Burdens Satisfied",
-        "Burdens Resolved"<
+        "Burdens Resolved",
         "Accepted Flag",
         "Rejected Flag"
     ]
+
+    worksheet.append(headers)
+
+    for row in rows:
+
+        worksheet.append([
+            row[header]
+            for header in headers
+        ])
+
+    style_header(worksheet)
+
+    worksheet.freeze_panes = "A2"
+
+    autofit_columns(worksheet)
+
+    return worksheet
+
+
+def get_protocol_rows(
+        rows,
+        protocol
+):
+
+    return [
+        row
+        for row in rows
+        if row["Protocol"] == protocol
+    ]
+
+
+def average(values):
+
+    if not values:
+        return 0
+
+    return sum(values) / len(values)
+
+
+def create_protocol_summary_sheet(
+        workbook,
+        rows
+):
+
+    worksheet = workbook.create_sheet(
+        "Protocol Summary"
+    )
+
+    headers = [
+        "Protocol",
+        "Dialogues",
+        "Average Turns",
+        "Minimum Turns",
+        "Maximum Turns",
+        "Acceptance Rate",
+        "Rejection Rate",
+        "Average PROPOSE",
+        "Average SUPPORT",
+        "Average CHALLENGE",
+        "Average ACCEPT",
+        "Average REJECT",
+        "Average WITHDRAW",
+        "Burdens Created",
+        "Burdens Activated",
+        "Burdens Satisfied",
+        "Burdens Resolved",
+        "Burden Satisfaction Rate"
+    ]
+
+    worksheet.append(headers)
+
+    for protocol in [
+        "Standard",
+        "Burden"
+    ]:
+
+        protocol_rows = get_protocol_rows(
+            rows,
+            protocol
+        )
+
+        dialogue_count = len(
+            protocol_rows
+        )
+
+        turn_counts = [
+            row["Turn Count"]
+            for row in protocol_rows
+        ]
+
+        accepted_count = sum(
+            row["Accepted Flag"]
+            for row in protocol_rows
+        )
+
+        rejected_count = sum(
+            row["Rejected Flag"]
+            for row in protocol_rows
+        )
+
+        burdens_created = sum(
+            row["Burdens Created"]
+            for row in protocol_rows
+        )
+
+        burdens_activated = sum(
+            row["Burdens Activated"]
+            for row in protocol_rows
+        )
+
+        burdens_satisfied = sum(
+            row["Burdens Satisfied"]
+            for row in protocol_rows
+        )
+
+        burdens_resolved = sum(
+            row["Burdens Resolved"]
+            for row in protocol_rows
+        )
+
+        acceptance_rate = (
+            accepted_count / dialogue_count
+            if dialogue_count
+            else 0
+        )
+
+        rejection_rate = (
+            rejected_count / dialogue_count
+            if dialogue_count
+            else 0
+        )
+
+        burden_satisfaction_rate = (
+            burdens_satisfied / burdens_activated
+            if burdens_activated
+            else 0
+        )
+
+        worksheet.append([
+            protocol,
+            dialogue_count,
+            round(
+                average(turn_counts),
+                2
+            ),
+            min(turn_counts)
+            if turn_counts
+            else 0,
+            max(turn_counts)
+            if turn_counts
+            else 0,
+            acceptance_rate,
+            rejection_rate,
+            round(
+                average([
+                    row["PROPOSE"]
+                    for row in protocol_rows
+                ]),
+                2
+            ),
+            round(
+                average([
+                    row["SUPPORT"]
+                    for row in protocol_rows
+                ]),
+                2
+            ),
+            round(
+                average([
+                    row["CHALLENGE"]
+                    for row in protocol_rows
+                ]),
+                2
+            ),
+            round(
+                average([
+                    row["ACCEPT"]
+                    for row in protocol_rows
+                ]),
+                2
+            ),
+            round(
+                average([
+                    row["REJECT"]
+                    for row in protocol_rows
+                ]),
+                2
+            ),
+            round(
+                average([
+                    row["WITHDRAW"]
+                    for row in protocol_rows
+                ]),
+                2
+            ),
+            burdens_created,
+            burdens_activated,
+            burdens_satisfied,
+            burdens_resolved,
+            burden_satisfaction_rate
+        ])
+
+    style_header(worksheet)
+
+    worksheet.freeze_panes = "A2"
+
+    # Percentage formatting
+    for cell in [
+        "F2", "F3",
+        "G2", "G3",
+        "R2", "R3"
+    ]:
+
+        worksheet[cell].number_format = (
+            "0.00%"
+        )
+
+    autofit_columns(worksheet)
+
+    return worksheet
+
+
+def create_termination_summary_sheet(
+        workbook,
+        rows
+):
+
+    worksheet = workbook.create_sheet(
+        "Termination Summary"
+    )
+
+    worksheet.append([
+        "Protocol",
+        "Termination Reason",
+        "Count",
+        "Percentage"
+    ])
+
+    protocols = [
+        "Standard",
+        "Burden"
+    ]
+
+    termination_reasons = sorted(
+        {
+            row["Termination Reason"]
+            for row in rows
+        }
+    )
+
+    for protocol in protocols:
+
+        protocol_rows = get_protocol_rows(
+            rows,
+            protocol
+        )
+
+        total = len(
+            protocol_rows
+        )
+
+        for reason in termination_reasons:
+
+            count = sum(
+                1
+                for row in protocol_rows
+                if (
+                    row[
+                        "Termination Reason"
+                    ]
+                    == reason
+                )
+            )
+
+            percentage = (
+                count / total
+                if total
+                else 0
+            )
+
+            worksheet.append([
+                protocol,
+                reason,
+                count,
+                percentage
+            ])
+
+    style_header(worksheet)
+
+    for row_number in range(
+        2,
+        worksheet.max_row + 1
+    ):
+
+        worksheet[
+            f"D{row_number}"
+        ].number_format = "0.00%"
+
+    autofit_columns(worksheet)
+
+    return worksheet
+
+
+def export_comparative_results(
+        standard_engines,
+        burden_engines
+):
+
+    workbook = Workbook()
 
     rows = []
 
@@ -173,326 +564,36 @@ def export_comparative_results(
 
         dialogue_id += 1
 
-
-    raw_sheet.get_range(
-        "A1:R1"
-    ).values = [
-        headers
-    ]
-
-    if rows:
-
-        end_row = len(rows) + 1
-
-        raw_sheet.get_range(
-            f"A2:R{end_row}"
-        ).values = rows
-
-    else:
-
-        end_row = 2
-
-    raw_sheet.freeze_panes.freeze_rows(
-        1
+    create_raw_data_sheet(
+        workbook,
+        rows
     )
 
-    raw_sheet.get_range(
-        "A1:R1"
-    ).format = {
-        "fill": "#111827",
-        "font": {
-            "bold": True,
-            "color": "#FFFFFF"
-        },
-        "horizontal_alignment": "center",
-        "vertical_alignment": "center",
-        "wrap_text": True
-    }
+    create_protocol_summary_sheet(
+        workbook,
+        rows
+    )
 
-    raw_sheet.get_range(
-        f"A1:R{end_row}"
-    ).format.wrap_text = True
-
-    raw_sheet.get_range(
-        f"A1:R{end_row}"
-    ).format.autofit_columns()
-
-    raw_sheet.get_range(
-        "D:F"
-    ).format.column_width
-
-    summary_headers = [
-        "Protocol",
-        "Dialogues",
-        "Average Turns",
-        "Acceptance Rate",
-        "Rejection Rate",
-        "Average Proposals",
-        "Average Supports",
-        "Average Challenges",
-        "Average Withdrawals",
-        "Burdens Created",
-        "Burdens Activated",
-        "Burdens Satisfied",
-        "Burdens Resolved",
-        "Burden Satisfaction Rate"
-    ]
-
-    summary_sheet.get_range(
-        "A1:N1"
-    ).values = [
-        summary_headers
-    ]
-
-    summary_sheet.get_range(
-        "A2:A3"
-    ).values = [
-        ["Standard"],
-        ["Burden"]
-    ]
-
-    summary_sheet.get_range(
-        "B2"
-    ).formulas = [[
-        (
-            f'COUNTIF('
-            f"'Raw Data'!£B$2:$B${end_row},"
-            f'A2)'
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "B2:B3"
-    ).fill_down()
-
-    summary_sheet.get_range(
-        "C2"
-    ).formulas = [[
-        (
-            f'AVERAGEIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$C$2:$C${end_row})"
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "C2:C3"
-    ).fill_down()
-
-    summary_sheet.get_range(
-        "D2"
-    ).formulas = [[
-        (
-            f'=IF(B2=0,0,'
-            f'SUMIF(',
-            f"'Raw Data'!B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$Q$2:$Q${end_row})"
-            f'/B2)'
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "D2:D3"
-    ).fill_down()
-
-    summary_sheet.get_range(
-        "E2"
-    ).formulas = [[
-        (
-            f'=IF(B2=0,0,'
-            f'SUMIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$R$2:$R${end_row})"
-            f'/B2)'
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "E2:E3"
-    ).fill_down()
-    
-    summary_sheet.get_range(
-        "F2"
-    ).formulas = [[
-        (
-            f'=AVERAGEIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$G$2:$G${end_row})"
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "F2:F3"
-    ).fill_down()
-        
-    summary_sheet.get_range(
-        "G2"
-    ).formulas = [[
-        (
-            f'=AVERAGEIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$H$2:$H${end_row})"
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "G2:G3"
-    ).fill_down()
-            
-    summary_sheet.get_range(
-        "H2"
-    ).formulas = [[
-        (
-            f'=AVERAGEIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$I$2:$I${end_row})"
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "H2:H3"
-    ).fill_down()
-        
-    summary_sheet.get_range(
-        "I2"
-    ).formulas = [[
-        (
-            f'=AVERAGEIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$L$2:$L${end_row})"
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "I2:I3"
-    ).fill_down()
-        
-    summary_sheet.get_range(
-        "J2"
-    ).formulas = [[
-        (
-            f'=SUMIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$M$2:$M${end_row})"
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "J2:J3"
-    ).fill_down()
-        
-    summary_sheet.get_range(
-        "K2"
-    ).formulas = [[
-        (
-            f'=SUMIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$N$2:$N${end_row})"
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "K2:K3"
-    ).fill_down()
-        
-    summary_sheet.get_range(
-        "L2"
-    ).formulas = [[
-        (
-            f'=SUMIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$O$2:$O${end_row})"
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "L2:L3"
-    ).fill_down()
-        
-    summary_sheet.get_range(
-        "M2"
-    ).formulas = [[
-        (
-            f'=SUMIF('
-            f"'Raw Data'!$B$2:$B${end_row},"
-            f'A2,'
-            f"'Raw Data'!$P$2:$P${end_row})"
-        )
-    ]]
-
-    summary_sheet.get_range(
-        "M2:M3"
-    ).fill_down()
-
-    summary_sheet.get_range(
-        "N2"
-    ).formulas = [[
-        '=IF(K2=0,0,L2/K2)'
-    ]]
-
-    summary_sheet.get_range(
-        "N2:N3"
-    ).fill_down()
-
-    summary_sheet.get_range(
-        "A1:N1"
-    ).format = {
-        "fill": "#111827",
-        "font": {
-            "bold": True,
-            "color": "#FFFFFF"
-        },
-        "horizontal_alignment": "center",
-        "vertical_alignment": "center",
-        "wrap_text": True
-    }
-
-    summary_sheet.get_range(
-        "A1:N3"
-    ).format.autofit_columns()
-
-    summary_sheet.get_range(
-        "D2:E3"
-    ).format.number_format = "0.00%"
-
-    summary_sheet.get_range(
-        "N2:N3"
-    ).format.number_format = "0.00%"
-
-    summary_sheet.get_range(
-        "C2:I3"
-    ).format.number_format = "0.00%"
+    create_termination_summary_sheet(
+        workbook,
+        rows
+    )
 
     output_path = (
         get_next_results_filename()
     )
 
-    SpreadsheetFile.export_xlsx(
-        workbook
-    ).save(
+    workbook.save(
         output_path
     )
 
     print()
     print(
-        f"Excel results exported to: "
-        f"{output_path}"
+        "Excel results exported successfully!"
+    )
+
+    print(
+        f"File: {output_path}"
     )
 
     return output_path
-
-
-    
-
-    
-
