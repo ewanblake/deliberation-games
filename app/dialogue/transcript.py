@@ -103,16 +103,16 @@ class TranscriptManager:
                 statistics["withdrawals"] += 1
 
             if burden_event == "CREATED":
-                statistics["burden_created"] += 1
+                statistics["burdens_created"] += 1
 
             elif burden_event == "ACTIVATED":
-                statistics["burden_activated"] += 1
+                statistics["burdens_activated"] += 1
 
             elif burden_event == "SATISFIED":
-                statistics["burden_satisfied"] += 1
+                statistics["burdens_satisfied"] += 1
 
             elif burden_event == "RESOLVED":
-                statistics["burden_resolved"] += 1
+                statistics["burdens_resolved"] += 1
 
             if turn["commitment_status"] == "ACTIVE":
                 statistics["active_commitments"] += 1

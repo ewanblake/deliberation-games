@@ -6,6 +6,8 @@ from app.dialogue.engine import (
     run_comparative_batch
 )
 
+from app.dialogue.excel_export import export_comparative_results
+
 app = Flask(__name__)
 
 @app.route("/", methods=["GET"])
@@ -48,6 +50,20 @@ def simulate():
         protocol=protocol,
         simulation_count=simulation_count
     )
+
+    if protocol == "Standard":
+
+        excel_file = export_comparative_results(
+            standard_engines=engines,
+            burden_engines=[]
+        )
+
+    else:
+
+        excel_file = export_comparative_results(
+            standard_engines=[],
+            burden_engines=engines
+        )
 
     results = []
 
@@ -138,7 +154,8 @@ def simulate():
         "simulation_count": simulation_count,
         "average_turns": average_turns,
         "accepted": accepted,
-        "rejected": rejected
+        "rejected": rejected,
+        "excel_file": excel_file
     }
 
     return render_template(
