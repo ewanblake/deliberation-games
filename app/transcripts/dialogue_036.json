@@ -1,0 +1,80 @@
+{
+    "dialogue_id": 36,
+    "scenario": "Travel Planning",
+    "protocol": "Burden",
+    "turn_count": 4,
+    "outcome": "PROPOSAL_REJECTED",
+    "termination_reason": "PROPOSAL_REJECTED",
+    "accepted_proposal": null,
+    "statistics": {
+        "proposals": 1,
+        "supports": 1,
+        "challenges": 1,
+        "accepts": 0,
+        "rejects": 1,
+        "withdrawals": 0,
+        "burdens_created": 0,
+        "burdens_activated": 2,
+        "burdens_satisfied": 3,
+        "burdens_resolved": 1,
+        "active_commitments": 3
+    },
+    "turns": [
+        {
+            "turn": 1,
+            "agent": "Agent A",
+            "state": "OPENING",
+            "move": "PROPOSE",
+            "proposal": "Travel by Bus",
+            "target_proposal": null,
+            "commitment_status": "ACTIVE",
+            "support_count": 0,
+            "burden_status": "CREATED",
+            "burden_owner": "Agent A",
+            "burden_proposal": "Travel by Bus",
+            "burden_event": "CREATED"
+        },
+        {
+            "turn": 2,
+            "agent": "Agent B",
+            "state": "DELIBERATION",
+            "move": "CHALLENGE",
+            "proposal": null,
+            "target_proposal": "Travel by Bus",
+            "commitment_status": "ACTIVE",
+            "support_count": 0,
+            "burden_status": "ACTIVE",
+            "burden_owner": "Agent A",
+            "burden_proposal": "Travel by Bus",
+            "burden_event": "ACTIVATED"
+        },
+        {
+            "turn": 3,
+            "agent": "Agent A",
+            "state": "DELIBERATION",
+            "move": "SUPPORT",
+            "proposal": null,
+            "target_proposal": "Travel by Bus",
+            "commitment_status": "ACTIVE",
+            "support_count": 1,
+            "burden_status": "SATISFIED",
+            "burden_owner": "Agent A",
+            "burden_proposal": "Travel by Bus",
+            "burden_event": "SATISFIED"
+        },
+        {
+            "turn": 4,
+            "agent": "Agent B",
+            "state": "DELIBERATION",
+            "move": "REJECT",
+            "proposal": null,
+            "target_proposal": "Travel by Bus",
+            "commitment_status": "REJECTED",
+            "support_count": 1,
+            "burden_status": "SATISFIED",
+            "burden_owner": "Agent A",
+            "burden_proposal": "Travel by Bus",
+            "burden_event": "RESOLVED"
+        }
+    ]
+}
