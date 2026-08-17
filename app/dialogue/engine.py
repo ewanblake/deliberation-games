@@ -7,6 +7,9 @@ from app.dialogue.scenarios import TRAVEL_OPTIONS
 from app.dialogue.transcript import TranscriptManager
 from app.dialogue.commitment_store import CommitmentStore
 from app.dialogue.burden import BurdenManager
+from app.dialogue.excel_export import (
+    export_comparative_results
+)
 
 class DialogueEngine:
 
@@ -766,7 +769,13 @@ def run_comparative_batch(simulation_count):
     print("COMPARATIVE BATCH COMPLETE")
     print("#" * 60)
 
+    excel_file = export_comparative_results(
+        standard_engines=standard_results,
+        burden_engines=burden_results
+    )
+
     return {
         "Standard": standard_results,
-        "Burden": burden_results
+        "Burden": burden_results,
+        "Excel File": excel_file
     }

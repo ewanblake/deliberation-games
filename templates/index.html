@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deliberation Dialogue Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-100 text-slate-900">
+    <div class="min-h-screen">
+      <header class="bg-slate-950 text-white">
+        <div class="max-w-6xl mx-auto px-6 py-8">
+          <p class="text-sm uppercase tracking-widest text-slate-400">
+            MSc Computing Research Deliverable
+          </p>
+
+          <h1 class="text-3xl font-bold mt-2">Deliberation Dialogue Engine</h1>
+
+          <p class="text-slate-300 mt-2 max-w-3xl">
+            Compare Standard deliberation against deliberation incorporating the
+            Burden of Proposing
+          </p>
+        </div>
+      </header>
+
+      <main class="max-w-6xl mx-auto px-6 py-8">
+        <section
+          class="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
+        >
+          <h2 class="text-xl font-semibold">Run Simulation</h2>
+
+          <p class="text-slate-500 mt-1">
+            Select a protocol and the number of dialogue simulations to generate!
+          </p>
+
+          <form action="/simulate" method="POST" class="grid md:grid-cols-3 gap-5 mt-6 items-end">
+        <div>
+
+            <label for="protocol" class="block text-sm font-medium mb-2">Protocol</label>
+
+            <select name="protocol" id="protocol" class="w-full border border-slate-300 rounded-lg px-4 py-3 bg-white">
+
+                <option value="Standard">
+                    Standard Deliberation
+                </option>
+
+                <option value="Burden">
+                    Burden of Proposing
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="simulation_count" class="block text-sm font-medium mb-2">
+                Number of Simulations
+            </label>
+
+            <input type="number" id="simulation_count" name="simulation_count" min="1" max="100" value="1" class="w-full border border-slate-300 rounded-lg px-4 py-3">
+
+        </div>
+
+        <button type="submit" class="bg-slate-950 text-white font-semibold rounded-lg px-6 py-3 hover: bg-slate-800 transition">
+            Run Simulation
+        </button>
+        </form>
+        </section>
+
+        {% if summary%}
+
+        <section class="mt-8">
+
+            <div class="flex items-center justify-between mb-4">
+
+                <div>
+                    <h2 class="text-xl font-semibold">
+                        Results Summary
+                    </h2>
+
+                    <p class="text-slate-500">
+                        {{ summary.protocol }} protocol
+                     </p>
+                </div>
+
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <div class="bg-white rounded-xl border border-slate-200 p-5">
+
+                    <p class="text-sm text-slate-500">
+                        Simulations
+                    </p>
+
+                    <p class="text-3x; font-bold mt-1">
+                        {{ summary.simulation_count }}
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 p-5">
+
+                    <p class="text-sm text-slate-500">
+                        Average Turns
+                    </p>
+
+                    <p class="text-3xl font-bold mt-1">
+                        {{ summary.average_turns}} </p>
+
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 p-5">
+
+                    <p class="text-sm text-slate-500">
+                        Accepted
+                    </p>
+
+                    <p class="text-3xl font-bold mt-1">
+                        {{ summary.accepted }}
+
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                    <p class="text-sm text-slate-500">
+                        Rejected
+                    </p>
+
+                    <p class="text-3xl font-bold mt-1">
+                        {{ summary.rejected }}
+
+                    </p>
+
+                </div>
+            </div>
+
+        </section>
+
+        <section class="mt-8">
+
+            <h2 class="text-xl font-semibold mb-4">
+
+                Dialogue Results
+            </h2>
+
+            <div class="space-y-5">
+
+                {% for result in results %}
+
+                <article class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+
+                    <div class="p-5 border-b border-slate-200 flex flex-wrap gap-4 justify-between items-center">
+
+                        <div>
+
+                            <h3 class="font-semibold text-lg">
+                                Simulation
+                                {{ result.simulation_number }}
+                            </h3>
+
+                            <p class="text-sm text-slate-500">
+                                {{ result.protocol }} Protocol
+                            </p>
+
+                        </div>
+
+                        <div class="flex gap-3 text-sm">
+
+                            <span class="bg-slate-100 rounded-full px-3 py-1">
+                                {{ result.turn_count }} turns
+                            </span>
+
+                            <span class=" bg-slate-100 rounded-full px-3 py-1">
+                                {{ result.outcome }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-5">
+
+                        <h4 class="font-medium mb-3">
+                            Move Frequencies
+                        </h4>
+
+                        <div class="grid grid-cols2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+
+                            {% for move, count in result.move_counts.items() %}
+
+                            <div class="bg-slate-50 rounded-lg p-3 text-center">
+
+                                <p class="text-xs text-slate-500">
+                                    {{ move }}
+                                </p>
+
+                                <p class="font-bold text-xl">
+                                    {{ count}}
+                                </p>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                        {% if result.protocol == "Burden" %}
+
+                        <h4 class="font-medium mt-6 mb-4">
+                            Burden Activity
+                        </h4>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                            {% for event, count in result.burden_events.items() %}
+
+                            <div class="bg-slate-50 rounded-lg p-3 text-center">
+
+                                <p class="text-xs text-slate-500">
+                                    {{ event }}
+                                </p>
+
+                                <p class="font-bold text-xl">
+                                    {{ count }}
+                                </p>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                        {% endif %}
+
+                        <details class="mt-6">
+
+                            <summary class="cursor-pointer font-medium">
+
+                                View Dialogue Transcript
+
+                            </summary>
+
+                            <div class="mt-4 bg-slate-950 text-slate-100 rounded-lg p-4 max-h-96 overflowy-auto font-mono text-sm space-y-3">
+
+                                {% for turn in result.transcript %}
+
+                                <div>
+
+                                    <p>
+                                        <span class="font-bold">
+                                            Turn {{ turn.turn}}
+                                        </span>
+
+                                        -
+                                        {{ turn.agent}}
+                                        -
+                                        {{ turn.move }}
+                                    </p>
+
+                                    {% if turn.proposal %}
+
+                                    <p class="text-slate-400">
+                                        Proposal: {{ turn.proposal }}
+                                    </p>
+
+                                    {% endif %}
+
+                                    {% if turn.target_proposal %}
+
+                                    <p class="text-slate-400">
+                                        Target: {{ turn.target_proposal }}
+                                    </p>
+
+                                    {% endif %}
+
+                                    {% if turn.burden_event %}
+
+                                    <p class="text-slate-400">
+                                        Burden: {{ turn.burden_event }}
+                                    </p>
+
+                                    {% endif %}
+
+                                </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </details>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+        </section>
+
+        {% endif %}
+
+      </main>
+    </div>
+  </body>
+</html>
