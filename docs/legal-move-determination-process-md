@@ -1,4 +1,3 @@
-```mermaid
 flowchart LR
     A[Current Dialogue State] --> B[Protocol]
     B --> C[Active Proposal]
@@ -6,4 +5,3 @@ flowchart LR
     D --> E[Burden Constraints]
     E --> F[Legal Move Set]
     F --> G[Agent Move Selection]
-```
