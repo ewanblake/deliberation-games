@@ -1,19 +1,14 @@
 ```mermaid
 stateDiagram-v2
+direction LR
 
 [*] --> NoCommitment
-
 NoCommitment --> ActiveCommitment : PROPOSE
 
 ActiveCommitment --> ActiveCommitment : SUPPORT
-
 ActiveCommitment --> Finalised : ACCEPT
-
-ActiveCommitment --> Removed : REJECT
-
-ActiveCommitment --> Removed : WITHDRAW
+ActiveCommitment --> Removed : REJECT / WITHDRAW
 
 Finalised --> [*]
-
 Removed --> [*]
 ```
