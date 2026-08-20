@@ -29,5 +29,5 @@ flowchart TD
 
     J --> N[Continue Dialogue]
 
-    M --> O [Continue Dialogue]
+    M --> O[Continue Dialogue]
 ```
