@@ -10,7 +10,7 @@ Note over A: Burden Created
 
 B->>A: CHALLENGE
 
-A->>B: SUPPORT(Cheaper)
+A->>B: SUPPORT(Travel by Train)
 
 Note over A: Burden Satisfied
 
